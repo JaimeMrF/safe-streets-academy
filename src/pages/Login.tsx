@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import estudiantesData from "@/db/estudiantes.json";
 import docentesData from "@/db/docentes.json";
-import nexiaLogo from "@/assets/nexia-logo.webp";
+import viaSafeLogo from "@/assets/viasafe-logo.png";
 
 const Login = () => {
   const [searchParams] = useSearchParams();
@@ -133,8 +133,8 @@ const Login = () => {
         <CardHeader className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2 mb-4">
             <img 
-              src={nexiaLogo} 
-              alt="Nexia+" 
+              src={viaSafeLogo} 
+              alt="ViaSafe Educación"
               className="h-16 animate-pulse w-auto"
             />
           </div>

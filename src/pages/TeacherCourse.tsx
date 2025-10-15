@@ -19,7 +19,7 @@ import {
   BarChart,
 } from "recharts";
 
-import nexiaLogo from "@/assets/nexia-logo.webp";
+import viaSafeLogo from "@/assets/viasafe-logo.png";
 import cursosData from "@/db/cursos.json";
 import estudiantesData from "@/db/estudiantes.json";
 import progresoData from "@/db/progreso_estudiantes.json";
@@ -207,8 +207,8 @@ const TeacherCourse = () => {
       <header className="bg-white/70 backdrop-blur-xl shadow-xl sticky top-0 z-50 border-b-4 border-gradient">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <img
-            src={nexiaLogo}
-            alt="Nexia+"
+            src={viaSafeLogo}
+            alt="ViaSafe Educación"
             className="h-8 sm:h-10 md:h-12 cursor-pointer hover:scale-110 transition-all duration-300 drop-shadow-lg"
             onClick={handleLogoClick}
           />

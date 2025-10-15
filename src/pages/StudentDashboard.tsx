@@ -6,7 +6,7 @@ import { Card } from "../components/ui/card";
 import { Progress } from "../components/ui/progress";
 import { Flame, Check, X, LogOut, ArrowLeft, Trophy } from "lucide-react";
 import { toast } from "sonner";
-import nexiaLogo from "../assets/nexia-logo.webp";
+import viaSafeLogo from "@/assets/viasafe-logo.png";
 import rutasData from "../db/rutas.json";
 import { upsertProgress } from "../lib/progress";
 import Memoria4x4 from "./games/memoria4x4/Memoria4x4";
@@ -211,8 +211,8 @@ const finishGame = () => {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <img
-                src={nexiaLogo}
-                alt="Nexia+"
+                src={viaSafeLogo}
+                alt="ViaSafe Educación"
                 className="h-10"
               />
               <div>

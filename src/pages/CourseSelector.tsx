@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, BookOpen, TrendingUp, Users, LogOut, Sparkles, Plus } from "lucide-react";
-import nexiaLogo from "@/assets/nexia-logo.webp";
+import viaSafeLogo from "@/assets/viasafe-logo.png";
 import cursosData from "@/db/cursos.json";
 import { BookOpen as IconBook, Sparkles as IconSparkles, Banknote as IconBanknote, Users as IconUsers, Brain as IconBrain } from "lucide-react";
 
@@ -92,8 +92,8 @@ const CourseSelector = () => {
         <header className="bg-white/70 backdrop-blur-xl shadow-xl sticky top-0 z-50 border-b-4 border-gradient">
           <div className="container mx-auto px-6 py-4 flex justify-between items-center">
             <img
-              src={nexiaLogo}
-              alt="Nexia+"
+              src={viaSafeLogo}
+              alt="ViaSafe Educación"
               className="h-8 sm:h-10 md:h-12 cursor-pointer hover:scale-110 transition-all duration-300 drop-shadow-lg"
               onClick={handleLogoClick}
             />
@@ -256,8 +256,8 @@ const CourseSelector = () => {
       <header className="bg-white/70 backdrop-blur-xl shadow-xl sticky top-0 z-50 border-b-4 border-gradient">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <img
-            src={nexiaLogo}
-            alt="Nexia+"
+            src={viaSafeLogo}
+            alt="ViaSafe Educación"
             className="h-8 sm:h-10 md:h-12 cursor-pointer hover:scale-110 transition-all duration-300 drop-shadow-lg"
             onClick={handleLogoClick}
           />

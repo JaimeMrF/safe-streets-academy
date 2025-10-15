@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { BookOpen, Plus, ArrowLeft, Save, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import nexiaLogo from "@/assets/nexia-logo.webp";
+import viaSafeLogo from "@/assets/viasafe-logo.png";
 import cursosData from "@/db/cursos.json";
 
 interface CourseFormData {
@@ -99,8 +99,8 @@ const CreateCourse = () => {
       <header className="bg-white/70 backdrop-blur-xl shadow-xl sticky top-0 z-50 border-b-4 border-gradient">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <img
-            src={nexiaLogo}
-            alt="Nexia+"
+            src={viaSafeLogo}
+            alt="ViaSafe Educación"
             className="h-8 sm:h-10 md:h-12 cursor-pointer hover:scale-110 transition-all duration-300 drop-shadow-lg"
             onClick={handleLogoClick}
           />

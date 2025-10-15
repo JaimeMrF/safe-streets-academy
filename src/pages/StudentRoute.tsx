@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Lock, CheckCircle, Trophy, Award, Download, Play } from "lucide-react";
-import nexiaLogo from "@/assets/nexia-logo.webp";
+import viaSafeLogo from "@/assets/viasafe-logo.png";
 import cursosData from "@/db/cursos.json";
 import rutasData from "@/db/rutas.json";
 import { getStudentCourseProgress, ProgressRecord } from "@/lib/progress";
@@ -123,8 +123,8 @@ const StudentRoute = () => {
       <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-40 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <img
-            src={nexiaLogo}
-            alt="Nexia+"
+            src={viaSafeLogo}
+            alt="ViaSafe Educación"
             className="h-12 cursor-pointer hover:scale-105 transition-transform"
             onClick={() => navigate("/courses")}
           />

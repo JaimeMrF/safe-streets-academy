@@ -5,12 +5,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
+import Auth from "./pages/Auth";
 import CourseSelector from "./pages/CourseSelector";
-import CreateCourse from "./pages/CreateCourse";
-import StudentRoute from "./pages/StudentRoute";
-import StudentDashboard from "./pages/StudentDashboard";
-import TeacherCourse from "./pages/TeacherCourse";
+import StudentCourse from "./pages/StudentCourse";
+import TeacherDashboard from "./pages/TeacherDashboard";
+import MemoryGame from "./pages/games/MemoryGame";
+import QuizGame from "./pages/games/QuizGame";
+import VideoPlayer from "./pages/games/VideoPlayer";
+import Model3DViewer from "./pages/games/Model3DViewer";
 
 const queryClient = new QueryClient();
 
@@ -22,13 +24,14 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/courses" element={<CourseSelector />} />
-          <Route path="/create-course" element={<CreateCourse />} />
-          <Route path="/student/course/:courseId" element={<StudentRoute />} />
-          <Route path="/teacher/course/:courseId" element={<TeacherCourse />} />
-          <Route path="/game/:routeId" element={<StudentDashboard />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/student/course/:courseId" element={<StudentCourse />} />
+          <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+          <Route path="/game/memory/:routeId" element={<MemoryGame />} />
+          <Route path="/game/quiz/:routeId" element={<QuizGame />} />
+          <Route path="/game/video/:routeId" element={<VideoPlayer />} />
+          <Route path="/game/3d-model/:routeId" element={<Model3DViewer />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

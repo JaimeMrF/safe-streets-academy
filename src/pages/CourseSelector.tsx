@@ -79,34 +79,48 @@ const CourseSelector = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-background/95 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Bienvenido, {userName}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">¡Hola, {userName.split(' ')[0]}! 👋</h1>
             <p className="text-muted-foreground">
               Nivel: {getEducationLevelLabel(userLevel)}
             </p>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Cerrar Sesión
-          </Button>
+          <div className="flex gap-2 w-full md:w-auto">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/resources")}
+              className="flex-1 md:flex-none"
+            >
+              📚 Recursos
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={handleLogout}
+              className="flex-1 md:flex-none"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Salir
+            </Button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {courses.map((course) => (
             <Card 
               key={course.id} 
-              className="hover:shadow-lg transition-shadow cursor-pointer border-border bg-card"
+              className="hover:shadow-lg hover:scale-105 transition-all cursor-pointer"
               onClick={() => navigate(`/student/course/${course.id}`)}
+              style={{ borderLeft: `4px solid ${course.color}` }}
             >
               <CardHeader>
-                <div className="flex items-start gap-4">
-                  <div className="text-5xl">{course.icon}</div>
+                <div className="flex items-start gap-3 md:gap-4">
+                  <div className="text-4xl md:text-5xl">{course.icon}</div>
                   <div className="flex-1">
-                    <CardTitle className="text-2xl mb-2">{course.name}</CardTitle>
-                    <CardDescription>{course.description}</CardDescription>
+                    <CardTitle className="text-xl md:text-2xl mb-2">{course.name}</CardTitle>
+                    <CardDescription className="text-sm">{course.description}</CardDescription>
                   </div>
                 </div>
               </CardHeader>

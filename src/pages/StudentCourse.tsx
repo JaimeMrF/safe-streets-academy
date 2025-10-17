@@ -109,53 +109,53 @@ const StudentCourse = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
-        <Button variant="ghost" onClick={() => navigate("/courses")} className="mb-6">
+        <Button variant="ghost" onClick={() => navigate("/courses")} className="mb-4 md:mb-6">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Volver a Cursos
         </Button>
 
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">{courseName}</h1>
-          <div className="flex items-center gap-4">
-            <Progress value={calculateOverallProgress()} className="flex-1" />
-            <span className="text-sm text-muted-foreground">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 md:mb-4">{courseName}</h1>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <Progress value={calculateOverallProgress()} className="flex-1 w-full" />
+            <span className="text-sm text-muted-foreground whitespace-nowrap">
               {Math.round(calculateOverallProgress())}% Completado
             </span>
           </div>
         </div>
 
-        <div className="grid gap-6">
+        <div className="grid gap-4 md:gap-6">
           {routes.map((route) => {
             const routeProgress = getProgressForRoute(route.id);
             const locked = isRouteLocked(route.level_order);
 
             return (
-              <Card key={route.id} className={locked ? "opacity-60" : ""}>
+              <Card key={route.id} className={`${locked ? "opacity-60" : ""} hover:shadow-lg transition-shadow`}>
                 <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <CardTitle className="text-2xl">{route.name}</CardTitle>
+                  <div className="flex flex-col md:flex-row items-start justify-between gap-3">
+                    <div className="flex-1 w-full">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <CardTitle className="text-xl md:text-2xl">{route.name}</CardTitle>
                         {routeProgress?.completed && (
-                          <CheckCircle className="h-6 w-6 text-primary" />
+                          <CheckCircle className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                         )}
-                        {locked && <Lock className="h-5 w-5 text-muted-foreground" />}
+                        {locked && <Lock className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />}
                         {route.is_certification_level && (
-                          <Badge variant="secondary">Certificación</Badge>
+                          <Badge variant="secondary" className="text-xs">Certificación</Badge>
                         )}
                       </div>
-                      <CardDescription>{route.description}</CardDescription>
+                      <CardDescription className="text-sm">{route.description}</CardDescription>
                     </div>
-                    <Badge variant="outline" className="ml-4">
+                    <Badge variant="outline" className="whitespace-nowrap">
                       Nivel {route.level_order}
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="flex gap-4 text-sm">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div className="flex flex-wrap gap-3 md:gap-4 text-sm w-full md:w-auto">
                       {routeProgress && (
                         <>
                           <div>
@@ -169,8 +169,8 @@ const StudentCourse = () => {
                         </>
                       )}
                     </div>
-                    <Link to={`/game/${route.game_type}/${route.id}`}>
-                      <Button disabled={locked}>
+                    <Link to={`/game/${route.game_type}/${route.id}`} className="w-full md:w-auto">
+                      <Button disabled={locked} className="w-full md:w-auto">
                         <Play className="mr-2 h-4 w-4" />
                         {routeProgress?.completed ? "Jugar de Nuevo" : "Comenzar"}
                       </Button>

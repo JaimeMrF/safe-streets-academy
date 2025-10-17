@@ -9,6 +9,8 @@ import Auth from "./pages/Auth";
 import CourseSelector from "./pages/CourseSelector";
 import StudentCourse from "./pages/StudentCourse";
 import TeacherDashboard from "./pages/TeacherDashboard";
+import TeacherRegistration from "./pages/TeacherRegistration";
+import ResourceLibrary from "./pages/ResourceLibrary";
 import MemoryGame from "./pages/games/MemoryGame";
 import QuizGame from "./pages/games/QuizGame";
 import VideoPlayer from "./pages/games/VideoPlayer";
@@ -25,7 +27,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/teacher/register" element={<TeacherRegistration />} />
           <Route path="/courses" element={<CourseSelector />} />
+          <Route path="/resources" element={<ResourceLibrary />} />
           <Route path="/student/course/:courseId" element={<StudentCourse />} />
           <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
           <Route path="/game/memory/:routeId" element={<MemoryGame />} />

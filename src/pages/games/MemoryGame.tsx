@@ -60,21 +60,29 @@ const MemoryGame = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 p-4 md:p-6">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between mb-6">
-          <div>
-            <p>Puntuación: {score}</p>
-            <p>Movimientos: {moves}</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div className="flex gap-4 md:gap-6">
+            <div className="text-center">
+              <p className="text-2xl font-bold text-primary">{score}</p>
+              <p className="text-xs md:text-sm text-muted-foreground">Puntuación</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-accent">{moves}</p>
+              <p className="text-xs md:text-sm text-muted-foreground">Movimientos</p>
+            </div>
           </div>
-          <Button onClick={() => navigate(-1)} variant="outline">Volver</Button>
+          <Button onClick={() => navigate(-1)} variant="outline" className="w-full md:w-auto">
+            Volver
+          </Button>
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
           {cards.map((card, i) => (
             <Card 
               key={i}
-              className="aspect-square flex items-center justify-center text-4xl cursor-pointer hover:bg-muted transition-colors"
+              className="aspect-square flex items-center justify-center text-3xl md:text-4xl cursor-pointer hover:bg-muted hover:scale-105 transition-all duration-200"
               onClick={() => handleClick(i)}
             >
               {flipped.includes(i) || matched.includes(i) ? card.symbol : '?'}
@@ -84,8 +92,10 @@ const MemoryGame = () => {
 
         {matched.length === cards.length && (
           <div className="text-center mt-8">
-            <h2 className="text-2xl font-bold mb-4">¡Completado!</h2>
-            <Button onClick={saveProgress}>Guardar y Continuar</Button>
+            <h2 className="text-xl md:text-2xl font-bold mb-4">¡Completado! 🎉</h2>
+            <Button onClick={saveProgress} size="lg" className="w-full md:w-auto">
+              Guardar y Continuar
+            </Button>
           </div>
         )}
       </div>

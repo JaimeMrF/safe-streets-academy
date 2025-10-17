@@ -107,7 +107,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-background/95 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-8">
           <img src={viaSafeLogo} alt="ViaSafe" className="h-20 object-contain" />
@@ -149,9 +149,17 @@ const Auth = () => {
                     />
                   </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex flex-col gap-2">
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Iniciando..." : "Iniciar Sesión"}
+                  </Button>
+                  <Button 
+                    type="button"
+                    variant="link" 
+                    className="text-sm text-accent"
+                    onClick={() => navigate("/teacher/register")}
+                  >
+                    ¿Eres profesor? Regístrate aquí
                   </Button>
                 </CardFooter>
               </form>

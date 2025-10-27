@@ -19,7 +19,7 @@ CREATE TABLE public.profiles (
 -- Tabla de roles de usuario
 CREATE TABLE public.user_roles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID NOT NULL,
   role public.app_role NOT NULL,
   UNIQUE(user_id, role)
 );

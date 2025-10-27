@@ -169,7 +169,7 @@ const StudentCourse = () => {
                         </>
                       )}
                     </div>
-                    <Link to={`/game/${route.game_type}/${route.id}`} className="w-full md:w-auto">
+                    <Link to={locked ? '#' : `/game/${route.game_type}/${route.id}`} className="w-full md:w-auto">
                       <Button disabled={locked} className="w-full md:w-auto">
                         <Play className="mr-2 h-4 w-4" />
                         {routeProgress?.completed ? "Jugar de Nuevo" : "Comenzar"}

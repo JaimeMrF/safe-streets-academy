@@ -15,6 +15,7 @@ import MemoryGame from "./pages/games/MemoryGame";
 import QuizGame from "./pages/games/QuizGame";
 import VideoPlayer from "./pages/games/VideoPlayer";
 import Model3DViewer from "./pages/games/Model3DViewer";
+import Memoria4x4 from "./pages/games/memoria4x4/Memoria4x4";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/student/course/:courseId" element={<StudentCourse />} />
           <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
           <Route path="/game/memory/:routeId" element={<MemoryGame />} />
+          <Route path="/game/memoria4x4/:routeId" element={<Memoria4x4 />} />
           <Route path="/game/quiz/:routeId" element={<QuizGame />} />
           <Route path="/game/video/:routeId" element={<VideoPlayer />} />
           <Route path="/game/3d-model/:routeId" element={<Model3DViewer />} />

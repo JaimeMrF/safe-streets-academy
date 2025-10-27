@@ -1,0 +1,176 @@
+===============================================
+  VIASAFE - INSTALACIÓN LOCAL PASO A PASO
+===============================================
+
+REQUISITOS PREVIOS:
+-------------------
+1. Node.js 18 o superior
+   Descargar: https://nodejs.org/
+
+2. Docker Desktop
+   Descargar: https://www.docker.com/products/docker-desktop
+   ⚠️ IMPORTANTE: Abrir Docker Desktop ANTES de continuar
+
+3. Git (opcional)
+   Descargar: https://git-scm.com/
+
+
+PASOS DE INSTALACIÓN:
+---------------------
+
+PASO 1: Abrir Docker Desktop
+   - Asegúrate de que Docker esté corriendo (icono verde)
+
+PASO 2: Instalar Supabase CLI
+   Abre una terminal/CMD y ejecuta:
+   
+   npm install -g supabase
+
+PASO 3: Navegar a la carpeta del proyecto
+   
+   cd ruta/a/viasafe-project
+
+PASO 4: Instalar dependencias
+   
+   npm install
+
+PASO 5: Iniciar base de datos local
+   
+   supabase start
+   
+   ⏱️ La primera vez puede tardar 3-5 minutos
+   📋 Guarda las credenciales que aparecen (API URL y anon key)
+
+PASO 6: Crear archivo de configuración
+   Crea un archivo llamado ".env.local" con este contenido:
+   
+   VITE_SUPABASE_URL=http://localhost:54321
+   VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+
+PASO 7: Iniciar la aplicación
+   
+   npm run dev
+   
+   ✅ La aplicación estará en: http://localhost:5173
+
+
+CUENTAS DE PRUEBA:
+------------------
+Estudiante:
+   Email: estudiante@test.com
+   Password: password123
+
+Profesor:
+   Email: profesor@test.com
+   Password: password123
+
+
+COMANDOS ÚTILES:
+----------------
+Ver estado de la base de datos:
+   supabase status
+
+Abrir interfaz web de la base de datos:
+   Abre: http://localhost:54323
+
+Detener base de datos:
+   supabase stop
+
+Reiniciar base de datos:
+   supabase db reset
+
+
+SOLUCIÓN DE PROBLEMAS:
+---------------------
+❌ "Docker no está corriendo"
+   ➡️ Abre Docker Desktop y espera a que inicie
+
+❌ "Puerto 54321 en uso"
+   ➡️ Ejecuta: supabase stop
+   ➡️ Luego: supabase start
+
+❌ "Cannot connect to database"
+   ➡️ Ejecuta: supabase db reset
+   ➡️ Luego: npm run dev
+
+❌ Los cambios no se reflejan
+   ➡️ Presiona Ctrl+C para detener
+   ➡️ Ejecuta: npm run dev
+
+
+COMPILAR PARA PRODUCCIÓN:
+-------------------------
+1. Ejecutar: npm run build
+2. Los archivos estarán en la carpeta "dist"
+3. Para probar localmente: 
+   npm install -g serve
+   serve -s dist -p 3000
+
+
+ESTRUCTURA DE ARCHIVOS:
+-----------------------
+src/
+  pages/
+    Auth.tsx                  - Login estudiantes
+    TeacherRegistration.tsx   - Registro profesores
+    CourseSelector.tsx        - Selección de cursos
+    StudentCourse.tsx         - Niveles del curso
+    TeacherDashboard.tsx      - Dashboard profesor
+    ResourceLibrary.tsx       - Videos y modelos 3D
+    games/
+      MemoryGame.tsx          - Memorama simple
+      memoria4x4/
+        Memoria4x4.tsx        - Memorama 4x4
+      QuizGame.tsx            - Quiz
+      VideoPlayer.tsx         - Reproductor videos
+      Model3DViewer.tsx       - Visor 3D
+
+supabase/
+  config.toml               - Configuración Supabase
+  init.sql                  - Estructura base de datos
+  seed.sql                  - Datos de prueba
+
+
+CARACTERÍSTICAS:
+----------------
+✅ Sistema de autenticación completo
+✅ Roles separados (estudiante/profesor/admin)
+✅ 5 tipos de juegos interactivos
+✅ Sistema de progreso y puntuaciones
+✅ Dashboard para profesores
+✅ Biblioteca de recursos multimedia
+✅ Responsive (funciona en móvil, tablet y PC)
+✅ 100% LOCAL - No requiere internet
+✅ Base de datos PostgreSQL local
+
+
+JUEGOS INCLUIDOS:
+-----------------
+🧠 Memory Game - Memorama clásico
+🧠 Memoria 4x4 - Memorama de señales de tránsito
+📝 Quiz Game - Preguntas interactivas
+🎥 Video Player - Videos educativos de YouTube
+🏗️ Model 3D Viewer - Modelos 3D interactivos
+
+
+PERSONALIZACIÓN:
+----------------
+Videos de YouTube:
+   Edita: src/pages/games/VideoPlayer.tsx
+   Línea 27: Cambia la URL del video
+
+Modelos 3D:
+   Edita: src/pages/games/Model3DViewer.tsx
+   Línea 30: Cambia la URL del modelo
+   Sube modelos en: https://sketchfab.com/
+
+
+SOPORTE:
+--------
+Para más información consulta:
+   README-LOCAL.md - Guía completa
+   GUIA-RAPIDA.md - Guía de inicio rápido
+
+
+¡LISTO! Tu aplicación está funcionando 100% LOCAL
+===============================================

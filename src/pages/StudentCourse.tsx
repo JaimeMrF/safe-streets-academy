@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Play, CheckCircle, Lock } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft, Play, CheckCircle, Lock, Award, Download } from "lucide-react";
 import { toast } from "sonner";
+import Certificate from "@/components/Certificate";
 
 interface Route {
   id: string;
@@ -32,6 +34,8 @@ const StudentCourse = () => {
   const [progress, setProgress] = useState<StudentProgress[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [showCertificate, setShowCertificate] = useState(false);
+  const [studentInfo, setStudentInfo] = useState({ name: "", level: "", completionDate: "", averageScore: 0 });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -73,12 +77,36 @@ const StudentCourse = () => {
     // Load progress
     const { data: progressData } = await supabase
       .from("student_progress")
-      .select("route_id, completed, score, best_accuracy_percentage")
+      .select("route_id, completed, score, best_accuracy_percentage, completion_date")
       .eq("student_id", userId)
       .in("route_id", routesData?.map(r => r.id) || []);
 
     if (progressData) {
       setProgress(progressData);
+
+      // Check if all routes are completed for certificate
+      const completedCount = progressData.filter(p => p.completed).length;
+      if (routesData && completedCount === routesData.length && completedCount > 0) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("first_name, last_name, education_level")
+          .eq("id", userId)
+          .single();
+
+        if (profile) {
+          const avgScore = progressData.reduce((sum, p) => sum + p.score, 0) / progressData.length;
+          const lastCompletion = progressData
+            .filter(p => p.completion_date)
+            .sort((a, b) => new Date(b.completion_date!).getTime() - new Date(a.completion_date!).getTime())[0];
+
+          setStudentInfo({
+            name: `${profile.first_name} ${profile.last_name}`,
+            level: profile.education_level,
+            completionDate: lastCompletion?.completion_date || new Date().toISOString(),
+            averageScore: Math.round(avgScore),
+          });
+        }
+      }
     }
 
     setLoading(false);
@@ -102,6 +130,8 @@ const StudentCourse = () => {
     return (completed / routes.length) * 100;
   };
 
+  const allCompleted = routes.length > 0 && progress.filter(p => p.completed).length === routes.length;
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">Cargando...</div>
@@ -124,6 +154,24 @@ const StudentCourse = () => {
               {Math.round(calculateOverallProgress())}% Completado
             </span>
           </div>
+          
+          {allCompleted && (
+            <div className="mt-4 p-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg border-2 border-primary">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <Award className="h-8 w-8 text-primary" />
+                  <div>
+                    <h3 className="font-bold text-lg">¡Felicitaciones! 🎉</h3>
+                    <p className="text-sm text-muted-foreground">Has completado todos los niveles del curso</p>
+                  </div>
+                </div>
+                <Button onClick={() => setShowCertificate(true)} className="gap-2">
+                  <Download className="h-4 w-4" />
+                  Ver Certificado
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="grid gap-4 md:gap-6">
@@ -181,6 +229,24 @@ const StudentCourse = () => {
             );
           })}
         </div>
+
+        {/* Certificate Dialog */}
+        <Dialog open={showCertificate} onOpenChange={setShowCertificate}>
+          <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Tu Certificado de Logro</DialogTitle>
+              <DialogDescription>
+                Has completado exitosamente todos los niveles de este curso
+              </DialogDescription>
+            </DialogHeader>
+            <Certificate
+              studentName={studentInfo.name}
+              educationLevel={studentInfo.level}
+              completionDate={studentInfo.completionDate}
+              averageScore={studentInfo.averageScore}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

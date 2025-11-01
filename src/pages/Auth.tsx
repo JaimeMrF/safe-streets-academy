@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,8 +8,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ShieldCheck, UserCircle, GraduationCap, Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 const Auth = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
   
@@ -18,24 +22,85 @@ const Auth = () => {
   const [signupPassword, setSignupPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [educationLevel, setEducationLevel] = useState("primaria");
+  const [educationLevel, setEducationLevel] = useState<"preescolar" | "primaria" | "secundaria" | "bachillerato">("primaria");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      alert("¡Inicio de sesión exitoso!");
-      setLoading(false);
-    }, 1500);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: loginEmail,
+      password: loginPassword,
+    });
+
+    if (error) {
+      toast.error(error.message);
+    } else if (data.user) {
+      toast.success("¡Bienvenido de vuelta!");
+      navigate("/courses");
+    }
+
+    setLoading(false);
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      alert("¡Cuenta creada exitosamente!");
+
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: signupEmail,
+      password: signupPassword,
+      options: {
+        emailRedirectTo: `${window.location.origin}/courses`,
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          education_level: educationLevel,
+        },
+      },
+    });
+
+    if (authError) {
+      toast.error(authError.message);
       setLoading(false);
-    }, 1500);
+      return;
+    }
+
+    if (authData.user) {
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert({
+          id: authData.user.id,
+          email: signupEmail,
+          first_name: firstName,
+          last_name: lastName,
+          education_level: educationLevel,
+        });
+
+      if (profileError) {
+        toast.error("Error al crear el perfil");
+        setLoading(false);
+        return;
+      }
+
+      const { error: roleError } = await supabase
+        .from("user_roles")
+        .insert({
+          user_id: authData.user.id,
+          role: "student",
+        });
+
+      if (roleError) {
+        toast.error("Error al asignar rol");
+        setLoading(false);
+        return;
+      }
+
+      toast.success("¡Cuenta creada exitosamente!");
+      navigate("/courses");
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -153,6 +218,7 @@ const Auth = () => {
                           value={loginEmail}
                           onChange={(e) => setLoginEmail(e.target.value)}
                           className="pl-11 h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300"
+                          required
                         />
                       </div>
                     </div>
@@ -169,6 +235,7 @@ const Auth = () => {
                           value={loginPassword}
                           onChange={(e) => setLoginPassword(e.target.value)}
                           className="pl-11 h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300"
+                          required
                         />
                       </div>
                     </div>
@@ -192,7 +259,7 @@ const Auth = () => {
                       type="button"
                       variant="ghost" 
                       className="text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50"
-                      onClick={() => window.location.href = "/teacher/register"}
+                      onClick={() => navigate("/teacher/register")}
                     >
                       ¿Eres profesor? Regístrate aquí →
                     </Button>
@@ -225,6 +292,7 @@ const Auth = () => {
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
                           className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                          required
                         />
                       </div>
                       <div className="space-y-2">
@@ -237,6 +305,7 @@ const Auth = () => {
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
                           className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                          required
                         />
                       </div>
                     </div>
@@ -244,7 +313,7 @@ const Auth = () => {
                       <Label htmlFor="education-level" className="text-slate-700 font-medium">
                         Nivel Educativo
                       </Label>
-                      <Select value={educationLevel} onValueChange={(value) => setEducationLevel(value)}>
+                      <Select value={educationLevel} onValueChange={(value: "preescolar" | "primaria" | "secundaria" | "bachillerato") => setEducationLevel(value)}>
                         <SelectTrigger className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl">
                           <SelectValue />
                         </SelectTrigger>
@@ -269,6 +338,7 @@ const Auth = () => {
                           value={signupEmail}
                           onChange={(e) => setSignupEmail(e.target.value)}
                           className="pl-11 h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                          required
                         />
                       </div>
                     </div>
@@ -285,6 +355,7 @@ const Auth = () => {
                           value={signupPassword}
                           onChange={(e) => setSignupPassword(e.target.value)}
                           className="pl-11 h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                          required
                         />
                       </div>
                       <p className="text-xs text-slate-500">Mínimo 8 caracteres</p>

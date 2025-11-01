@@ -252,3 +252,4 @@ FROM public.courses WHERE education_level = 'bachillerato' LIMIT 1;
 INSERT INTO public.routes (course_id, name, description, level_order, game_type, is_certification_level) 
 SELECT id, 'Examen de Certificación', 'Demuestra todo lo aprendido', 4, 'quiz', TRUE
 FROM public.courses WHERE education_level = 'bachillerato' LIMIT 1;
+

@@ -2,38 +2,29 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
-import { Users, TrendingUp, Award, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LogOut, Users, GraduationCap, TrendingUp, Award, Search, Filter } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
-interface StudentWithProgress {
+interface Student {
   id: string;
   first_name: string;
   last_name: string;
+  email: string;
   education_level: string;
-  total_routes: number;
-  completed_routes: number;
-  average_score: number;
-  best_accuracy: number;
-  total_attempts: number;
-  completion_percentage: number;
-  has_certification: boolean;
+  created_at: string;
 }
 
 const TeacherDashboard = () => {
   const navigate = useNavigate();
-  const [students, setStudents] = useState<StudentWithProgress[]>([]);
-  const [selectedLevel, setSelectedLevel] = useState<string>("todos");
-  const [stats, setStats] = useState({
-    totalStudents: 0,
-    averageCompletion: 0,
-    topPerformer: "",
-    totalActivities: 0,
-    certifiedStudents: 0,
-  });
+  const [students, setStudents] = useState<Student[]>([]);
+  const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
+  const [teacherName, setTeacherName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [levelFilter, setLevelFilter] = useState<string>("all");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -43,100 +34,93 @@ const TeacherDashboard = () => {
         return;
       }
 
-      // Check if user is teacher or admin
-      const { data: roles } = await supabase
+      // Verificar que sea profesor
+      const { data: userRole } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .single();
 
-      const isTeacherOrAdmin = roles?.some(r => r.role === "teacher" || r.role === "admin");
-      if (!isTeacherOrAdmin) {
+      if (userRole?.role !== "teacher") {
+        toast.error("No tienes permisos de profesor");
         navigate("/courses");
         return;
       }
 
-      loadDashboardData();
+      // Obtener datos del profesor
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (profile) {
+        setTeacherName(`${profile.first_name} ${profile.last_name}`);
+      }
+
+      // Obtener TODOS los estudiantes (usuarios con rol student)
+      const { data: studentRoles, error: rolesError } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "student");
+
+      if (rolesError) {
+        console.error("Error al obtener roles:", rolesError);
+        toast.error("Error al cargar estudiantes");
+        setLoading(false);
+        return;
+      }
+
+      if (studentRoles && studentRoles.length > 0) {
+        const studentIds = studentRoles.map(r => r.user_id);
+
+        // Obtener perfiles de todos los estudiantes
+        const { data: studentsData, error: studentsError } = await supabase
+          .from("profiles")
+          .select("*")
+          .in("id", studentIds)
+          .order("created_at", { ascending: false });
+
+        if (studentsError) {
+          console.error("Error al cargar estudiantes:", studentsError);
+          toast.error("Error al cargar estudiantes");
+        } else {
+          console.log(`✅ Estudiantes cargados: ${studentsData?.length || 0}`, studentsData);
+          setStudents(studentsData || []);
+          setFilteredStudents(studentsData || []);
+        }
+      }
+
+      setLoading(false);
     };
 
     checkAuth();
-  }, []);
+  }, [navigate]);
 
-  const loadDashboardData = async () => {
-    // Load all students with their progress
-    const { data: profilesData } = await supabase
-      .from("profiles")
-      .select("*");
+  // Filtrar estudiantes por búsqueda y nivel
+  useEffect(() => {
+    let filtered = students;
 
-    if (!profilesData) {
-      setLoading(false);
-      return;
+    // Filtrar por búsqueda
+    if (searchTerm) {
+      filtered = filtered.filter(student =>
+        `${student.first_name} ${student.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.email.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
 
-    // Load progress for all students
-    const { data: progressData } = await supabase
-      .from("student_progress")
-      .select("*");
+    // Filtrar por nivel educativo
+    if (levelFilter !== "all") {
+      filtered = filtered.filter(student => student.education_level === levelFilter);
+    }
 
-    // Load all routes count
-    const { data: routesData } = await supabase
-      .from("routes")
-      .select("id, course_id, courses(education_level)");
+    setFilteredStudents(filtered);
+  }, [searchTerm, levelFilter, students]);
 
-    const studentsWithProgress = profilesData.map(student => {
-      const studentProgress = progressData?.filter(p => p.student_id === student.id) || [];
-      const relevantRoutes = routesData?.filter((r: any) => 
-        r.courses?.education_level === student.education_level
-      ) || [];
-
-      const completed = studentProgress.filter(p => p.completed).length;
-      const totalScore = studentProgress.reduce((sum, p) => sum + p.score, 0);
-      const avgScore = studentProgress.length > 0 ? totalScore / studentProgress.length : 0;
-      const bestAccuracy = studentProgress.length > 0 
-        ? Math.max(...studentProgress.map(p => p.best_accuracy_percentage || 0))
-        : 0;
-      const totalAttempts = studentProgress.reduce((sum, p) => sum + (p.attempts || 0), 0);
-      const completionPercentage = relevantRoutes.length > 0 
-        ? (completed / relevantRoutes.length) * 100 
-        : 0;
-      const hasCertification = completionPercentage === 100;
-
-      return {
-        id: student.id,
-        first_name: student.first_name,
-        last_name: student.last_name,
-        education_level: student.education_level,
-        total_routes: relevantRoutes.length,
-        completed_routes: completed,
-        average_score: Math.round(avgScore),
-        best_accuracy: Math.round(bestAccuracy),
-        total_attempts: totalAttempts,
-        completion_percentage: Math.round(completionPercentage),
-        has_certification: hasCertification,
-      };
-    });
-
-    setStudents(studentsWithProgress);
-
-    // Calculate stats
-    const totalStudents = studentsWithProgress.length;
-    const totalCompletion = studentsWithProgress.reduce((sum, s) => sum + s.completion_percentage, 0);
-    const avgCompletion = totalStudents > 0 ? totalCompletion / totalStudents : 0;
-    
-    const topStudent = studentsWithProgress.reduce((top, student) => 
-      student.average_score > (top?.average_score || 0) ? student : top
-    , studentsWithProgress[0]);
-
-    const certifiedCount = studentsWithProgress.filter(s => s.has_certification).length;
-
-    setStats({
-      totalStudents,
-      averageCompletion: Math.round(avgCompletion),
-      topPerformer: topStudent ? `${topStudent.first_name} ${topStudent.last_name}` : "N/A",
-      totalActivities: progressData?.length || 0,
-      certifiedStudents: certifiedCount,
-    });
-
-    setLoading(false);
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Sesión cerrada");
+    navigate("/");
   };
 
   const getEducationLevelLabel = (level: string) => {
@@ -149,178 +133,322 @@ const TeacherDashboard = () => {
     return labels[level] || level;
   };
 
-  const filteredStudents = selectedLevel === "todos" 
-    ? students 
-    : students.filter(s => s.education_level === selectedLevel);
+  const getEducationLevelEmoji = (level: string) => {
+    const emojis: Record<string, string> = {
+      preescolar: "🚦",
+      primaria: "🚸",
+      secundaria: "🚴",
+      bachillerato: "🚗",
+    };
+    return emojis[level] || "📚";
+  };
+
+  const getEducationLevelColor = (level: string) => {
+    const colors: Record<string, string> = {
+      preescolar: "#EF4444",
+      primaria: "#3B82F6",
+      secundaria: "#10B981",
+      bachillerato: "#8B5CF6",
+    };
+    return colors[level] || "#64748B";
+  };
+
+  const getStudentsByLevel = (level: string) => {
+    return students.filter(s => s.education_level === level).length;
+  };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">Cargando panel...</div>
-    </div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center animate-fade-in">
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="absolute inset-0 border-4 border-blue-200 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-lg font-semibold text-slate-700 mb-2">Cargando estudiantes...</p>
+          <p className="text-sm text-slate-500">Espera un momento</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5 p-4 md:p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-6 md:mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Panel de Profesor</h1>
-          <p className="text-muted-foreground">Monitorea el progreso y rendimiento de todos tus estudiantes</p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 mb-6 md:mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Estudiantes</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalStudents}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Completación Promedio</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.averageCompletion}%</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Mejor Estudiante</CardTitle>
-              <Award className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-lg font-bold truncate">{stats.topPerformer}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Actividades Totales</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalActivities}</div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-primary/10 to-accent/10">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Certificados</CardTitle>
-              <Award className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats.certifiedStudents}</div>
-              <p className="text-xs text-muted-foreground mt-1">Estudiantes certificados</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filtro por Nivel */}
-        <div className="mb-6">
-          <Tabs value={selectedLevel} onValueChange={setSelectedLevel}>
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="todos">Todos</TabsTrigger>
-              <TabsTrigger value="preescolar">Preescolar</TabsTrigger>
-              <TabsTrigger value="primaria">Primaria</TabsTrigger>
-              <TabsTrigger value="secundaria">Secundaria</TabsTrigger>
-              <TabsTrigger value="bachillerato">Bachillerato</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-
-        {/* Students Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Progreso de Estudiantes {selectedLevel !== "todos" && `- ${getEducationLevelLabel(selectedLevel)}`}</CardTitle>
-            <CardDescription>
-              Vista detallada del rendimiento individual ({filteredStudents.length} estudiante{filteredStudents.length !== 1 ? 's' : ''})
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Estudiante</TableHead>
-                  <TableHead>Nivel</TableHead>
-                  <TableHead>Progreso</TableHead>
-                  <TableHead>Punt. Promedio</TableHead>
-                  <TableHead>Mejor Precisión</TableHead>
-                  <TableHead>Intentos</TableHead>
-                  <TableHead>Completadas</TableHead>
-                  <TableHead>Estado</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredStudents.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                      No hay estudiantes en este nivel
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredStudents.map((student) => (
-                    <TableRow key={student.id}>
-                      <TableCell className="font-medium whitespace-nowrap">
-                        {student.first_name} {student.last_name}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {getEducationLevelLabel(student.education_level)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2 min-w-[120px]">
-                          <Progress 
-                            value={student.completion_percentage} 
-                            className="w-16"
-                          />
-                          <span className="text-sm text-muted-foreground whitespace-nowrap">
-                            {student.completion_percentage}%
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={student.average_score >= 80 ? "default" : "secondary"}>
-                          {student.average_score}/100
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm font-medium text-primary">
-                          {student.best_accuracy}%
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm">{student.total_attempts}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm whitespace-nowrap">
-                          {student.completed_routes}/{student.total_routes}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        {student.has_certification ? (
-                          <Badge className="bg-gradient-to-r from-primary to-accent">
-                            <Award className="h-3 w-3 mr-1" />
-                            Certificado
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline">En Progreso</Badge>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+        <div className="absolute top-40 right-10 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-8 left-1/2 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
       </div>
+
+      <div className="relative p-4 md:p-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="mb-8 md:mb-12">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+              <div className="space-y-2 animate-fade-in">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="text-6xl animate-wave drop-shadow-lg">👨‍🏫</div>
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full text-xs font-medium text-purple-900 mb-2">
+                      <GraduationCap className="w-3 h-3" />
+                      <span>Panel de Profesor</span>
+                    </div>
+                    <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 animate-gradient">
+                        ¡Hola, {teacherName.split(' ')[0]}!
+                      </span>
+                    </h1>
+                  </div>
+                </div>
+                <p className="text-lg md:text-xl text-slate-600 max-w-2xl leading-relaxed">
+                  Gestiona y supervisa el progreso de tus <span className="font-bold text-purple-600">estudiantes</span>.
+                </p>
+              </div>
+
+              <div className="flex gap-3 w-full lg:w-auto animate-slide-down">
+                <Button 
+                  onClick={() => navigate("/teacher/courses")}
+                  className="flex-1 lg:flex-none bg-white text-purple-600 hover:bg-purple-50 border-2 border-purple-300 shadow-xl hover:shadow-2xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 font-semibold"
+                >
+                  <GraduationCap className="mr-2 h-5 w-5" />
+                  Gestionar Cursos
+                </Button>
+                <Button 
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="flex-1 lg:flex-none bg-white hover:bg-red-50 border-2 border-slate-300 hover:border-red-400 shadow-xl hover:shadow-2xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 text-slate-700 hover:text-red-600 font-semibold"
+                >
+                  <LogOut className="mr-2 h-5 w-5" />
+                  Salir
+                </Button>
+              </div>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+              <Card className="group border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95 hover:shadow-2xl hover:scale-105 transition-all duration-300 overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-4 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <Users className="w-7 h-7 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-3xl font-extrabold text-slate-800">{students.length}</p>
+                      <p className="text-sm font-medium text-slate-600">Total Estudiantes</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="group border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95 hover:shadow-2xl hover:scale-105 transition-all duration-300 overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-pink-500"></div>
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-4 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-2xl">🚦</span>
+                    </div>
+                    <div>
+                      <p className="text-3xl font-extrabold text-slate-800">{getStudentsByLevel("preescolar")}</p>
+                      <p className="text-sm font-medium text-slate-600">Preescolar</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="group border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95 hover:shadow-2xl hover:scale-105 transition-all duration-300 overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-2xl">🚸</span>
+                    </div>
+                    <div>
+                      <p className="text-3xl font-extrabold text-slate-800">{getStudentsByLevel("primaria")}</p>
+                      <p className="text-sm font-medium text-slate-600">Primaria</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="group border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95 hover:shadow-2xl hover:scale-105 transition-all duration-300 overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-500"></div>
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-4 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-2xl">🚴</span>
+                    </div>
+                    <div>
+                      <p className="text-3xl font-extrabold text-slate-800">{getStudentsByLevel("secundaria") + getStudentsByLevel("bachillerato")}</p>
+                      <p className="text-sm font-medium text-slate-600">Secundaria+</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Filters */}
+          <div className="mb-6 flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="Buscar por nombre o email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-11 h-12 border-2 border-slate-200 focus:border-purple-500 rounded-xl bg-white"
+              />
+            </div>
+            <Select value={levelFilter} onValueChange={setLevelFilter}>
+              <SelectTrigger className="w-full md:w-64 h-12 border-2 border-slate-200 focus:border-purple-500 rounded-xl bg-white">
+                <Filter className="w-5 h-5 mr-2" />
+                <SelectValue placeholder="Filtrar por nivel" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos los niveles</SelectItem>
+                <SelectItem value="preescolar">🚦 Preescolar</SelectItem>
+                <SelectItem value="primaria">🚸 Primaria</SelectItem>
+                <SelectItem value="secundaria">🚴 Secundaria</SelectItem>
+                <SelectItem value="bachillerato">🚗 Bachillerato</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Students List */}
+          {filteredStudents.length > 0 ? (
+            <>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-3xl font-bold text-slate-800">Mis Estudiantes</h2>
+                <span className="text-sm text-slate-500 ml-2">({filteredStudents.length} encontrados)</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredStudents.map((student, index) => (
+                  <Card
+                    key={student.id}
+                    className="group border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95 hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer overflow-hidden animate-slide-up"
+                    onClick={() => navigate(`/teacher/student/${student.id}`)}
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <div
+                      className="h-2 w-full"
+                      style={{ background: getEducationLevelColor(student.education_level) }}
+                    />
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start gap-4">
+                        <div className="text-5xl group-hover:scale-110 transition-transform duration-300">
+                          {getEducationLevelEmoji(student.education_level)}
+                        </div>
+                        <div className="flex-1">
+                          <CardTitle className="text-lg mb-1 group-hover:text-purple-600 transition-colors">
+                            {student.first_name} {student.last_name}
+                          </CardTitle>
+                          <CardDescription className="text-sm">
+                            {student.email}
+                          </CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <span
+                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white"
+                          style={{ background: getEducationLevelColor(student.education_level) }}
+                        >
+                          {getEducationLevelLabel(student.education_level)}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                        >
+                          Ver Progreso →
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </>
+          ) : (
+            <Card className="border-2 border-dashed border-slate-300 bg-white/70 backdrop-blur-sm shadow-xl animate-fade-in">
+              <CardContent className="pt-16 pb-16 text-center">
+                <div className="relative w-28 h-28 bg-gradient-to-br from-slate-200 to-slate-300 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <Users className="w-14 h-14 text-slate-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full animate-pulse"></div>
+                </div>
+                <h3 className="text-2xl font-bold text-slate-800 mb-3">
+                  No se encontraron estudiantes
+                </h3>
+                <p className="text-slate-600 mb-8 max-w-md mx-auto leading-relaxed">
+                  {searchTerm || levelFilter !== "all"
+                    ? "Intenta con otros filtros de búsqueda"
+                    : "Aún no tienes estudiantes registrados en la plataforma"}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slide-down {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slide-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes wave {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(-15deg); }
+          75% { transform: rotate(15deg); }
+        }
+        @keyframes blob {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        @keyframes gradient {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        .animate-fade-in {
+          animation: fade-in 1s ease-out forwards;
+        }
+        .animate-slide-down {
+          animation: slide-down 0.8s ease-out forwards;
+        }
+        .animate-slide-up {
+          animation: slide-up 0.6s ease-out forwards;
+        }
+        .animate-wave {
+          animation: wave 2.5s ease-in-out infinite;
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradient 3s ease infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}} />
     </div>
   );
 };

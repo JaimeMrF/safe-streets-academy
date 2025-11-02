@@ -16,6 +16,12 @@ import QuizGame from "./pages/games/QuizGame";
 import VideoPlayer from "./pages/games/VideoPlayer";
 import Model3DViewer from "./pages/games/Model3DViewer";
 import Memoria4x4 from "./pages/games/memoria4x4/Memoria4x4";
+import StudentDetail from "./pages/StudentDetail";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminStudents from "./pages/AdminStudents";
+import AdminSettings from "./pages/AdminSettings";
+import AdminReports from "./pages/AdminReports";
+import AdminTeachers from "./pages/AdminTeachers";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +32,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/admin/teachers" element={<AdminTeachers />} />
+          <Route path="/admin/reports" element={<AdminReports />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
+          <Route path="/admin/students" element={<AdminStudents />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/teacher/student/:studentId" element={<StudentDetail />} />
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/teacher/register" element={<TeacherRegistration />} />

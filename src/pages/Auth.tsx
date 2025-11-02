@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,32 @@ const Auth = () => {
   const [lastName, setLastName] = useState("");
   const [educationLevel, setEducationLevel] = useState<"preescolar" | "primaria" | "secundaria" | "bachillerato">("primaria");
 
-  const handleLogin = async (e) => {
+  // Verificar si ya hay sesión al cargar
+  useEffect(() => {
+    checkUserSession();
+  }, []);
+
+  const checkUserSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      // Verificar el rol del usuario
+      const { data: userRole } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (userRole?.role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (userRole?.role === "teacher") {
+        navigate("/teacher/dashboard");
+      } else {
+        navigate("/courses");
+      }
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
@@ -35,15 +60,34 @@ const Auth = () => {
 
     if (error) {
       toast.error(error.message);
-    } else if (data.user) {
-      toast.success("¡Bienvenido de vuelta!");
-      navigate("/courses");
+      setLoading(false);
+      return;
+    }
+
+    if (data.user) {
+      // Verificar el rol del usuario
+      const { data: userRole } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.user.id)
+        .single();
+
+      if (userRole?.role === "admin") {
+        toast.success("¡Bienvenido Administrador!");
+        navigate("/admin/dashboard");
+      } else if (userRole?.role === "teacher") {
+        toast.success("¡Bienvenido Profesor!");
+        navigate("/teacher/dashboard");
+      } else {
+        toast.success("¡Bienvenido de vuelta!");
+        navigate("/courses");
+      }
     }
 
     setLoading(false);
   };
 
-  const handleSignup = async (e) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
@@ -204,66 +248,60 @@ const Auth = () => {
                       Ingresa tus credenciales para continuar aprendiendo
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="login-email" className="text-slate-700 font-medium">
-                        Correo Electrónico
-                      </Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                        <Input
-                          id="login-email"
-                          type="email"
-                          placeholder="tu@email.com"
-                          value={loginEmail}
-                          onChange={(e) => setLoginEmail(e.target.value)}
-                          className="pl-11 h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300"
-                          required
-                        />
+                  <form onSubmit={handleLogin}>
+                    <CardContent className="space-y-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="login-email" className="text-slate-700 font-medium">
+                          Correo Electrónico
+                        </Label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                          <Input
+                            id="login-email"
+                            type="email"
+                            placeholder="tu@email.com"
+                            value={loginEmail}
+                            onChange={(e) => setLoginEmail(e.target.value)}
+                            className="pl-11 h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300"
+                            required
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="login-password" className="text-slate-700 font-medium">
-                        Contraseña
-                      </Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                        <Input
-                          id="login-password"
-                          type="password"
-                          placeholder="••••••••"
-                          value={loginPassword}
-                          onChange={(e) => setLoginPassword(e.target.value)}
-                          className="pl-11 h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300"
-                          required
-                        />
+                      <div className="space-y-2">
+                        <Label htmlFor="login-password" className="text-slate-700 font-medium">
+                          Contraseña
+                        </Label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                          <Input
+                            id="login-password"
+                            type="password"
+                            placeholder="••••••••"
+                            value={loginPassword}
+                            onChange={(e) => setLoginPassword(e.target.value)}
+                            className="pl-11 h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300"
+                            required
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <button
-                      type="button"
-                      className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
-                    >
-                      ¿Olvidaste tu contraseña?
-                    </button>
-                  </CardContent>
-                  <CardFooter className="flex flex-col gap-4 pt-2">
-                    <Button 
-                      onClick={handleLogin}
-                      className="w-full h-12 text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group"
-                      disabled={loading}
-                    >
-                      {loading ? "Iniciando..." : "Iniciar Sesión"}
-                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                    <Button 
-                      type="button"
-                      variant="ghost" 
-                      className="text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50"
-                      onClick={() => navigate("/teacher/register")}
-                    >
-                      ¿Eres profesor? Regístrate aquí →
-                    </Button>
-                  </CardFooter>
+                      <button
+                        type="button"
+                        className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
+                      >
+                        ¿Olvidaste tu contraseña?
+                      </button>
+                    </CardContent>
+                    <CardFooter className="flex flex-col gap-4 pt-2">
+                      <Button 
+                        type="submit"
+                        className="w-full h-12 text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group"
+                        disabled={loading}
+                      >
+                        {loading ? "Iniciando..." : "Iniciar Sesión"}
+                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </CardFooter>
+                  </form>
                 </Card>
               </TabsContent>
 
@@ -280,97 +318,100 @@ const Auth = () => {
                       Crea tu cuenta y comienza a aprender de forma divertida
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-5">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="first-name" className="text-slate-700 font-medium">
-                          Nombre
-                        </Label>
-                        <Input
-                          id="first-name"
-                          placeholder="Juan"
-                          value={firstName}
-                          onChange={(e) => setFirstName(e.target.value)}
-                          className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
-                          required
-                        />
+                  <form onSubmit={handleSignup}>
+                    <CardContent className="space-y-5">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="first-name" className="text-slate-700 font-medium">
+                            Nombre
+                          </Label>
+                          <Input
+                            id="first-name"
+                            placeholder="Juan"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="last-name" className="text-slate-700 font-medium">
+                            Apellido
+                          </Label>
+                          <Input
+                            id="last-name"
+                            placeholder="Pérez"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                            required
+                          />
+                        </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="last-name" className="text-slate-700 font-medium">
-                          Apellido
+                        <Label htmlFor="education-level" className="text-slate-700 font-medium">
+                          Nivel Educativo
                         </Label>
-                        <Input
-                          id="last-name"
-                          placeholder="Pérez"
-                          value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
-                          className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
-                          required
-                        />
+                        <Select value={educationLevel} onValueChange={(value: "preescolar" | "primaria" | "secundaria" | "bachillerato") => setEducationLevel(value)}>
+                          <SelectTrigger className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="preescolar">🚦 Preescolar (3-5 años)</SelectItem>
+                            <SelectItem value="primaria">🚸 Primaria (6-11 años)</SelectItem>
+                            <SelectItem value="secundaria">🚴 Secundaria (12-14 años)</SelectItem>
+                            <SelectItem value="bachillerato">🚗 Bachillerato (15-18 años)</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="education-level" className="text-slate-700 font-medium">
-                        Nivel Educativo
-                      </Label>
-                      <Select value={educationLevel} onValueChange={(value: "preescolar" | "primaria" | "secundaria" | "bachillerato") => setEducationLevel(value)}>
-                        <SelectTrigger className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="preescolar">🚦 Preescolar (3-5 años)</SelectItem>
-                          <SelectItem value="primaria">🚸 Primaria (6-11 años)</SelectItem>
-                          <SelectItem value="secundaria">🚴 Secundaria (12-14 años)</SelectItem>
-                          <SelectItem value="bachillerato">🚗 Bachillerato (15-18 años)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-email" className="text-slate-700 font-medium">
-                        Correo Electrónico
-                      </Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                        <Input
-                          id="signup-email"
-                          type="email"
-                          placeholder="tu@email.com"
-                          value={signupEmail}
-                          onChange={(e) => setSignupEmail(e.target.value)}
-                          className="pl-11 h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
-                          required
-                        />
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-email" className="text-slate-700 font-medium">
+                          Correo Electrónico
+                        </Label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                          <Input
+                            id="signup-email"
+                            type="email"
+                            placeholder="tu@email.com"
+                            value={signupEmail}
+                            onChange={(e) => setSignupEmail(e.target.value)}
+                            className="pl-11 h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                            required
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-password" className="text-slate-700 font-medium">
-                        Contraseña
-                      </Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                        <Input
-                          id="signup-password"
-                          type="password"
-                          placeholder="••••••••"
-                          value={signupPassword}
-                          onChange={(e) => setSignupPassword(e.target.value)}
-                          className="pl-11 h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
-                          required
-                        />
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-password" className="text-slate-700 font-medium">
+                          Contraseña
+                        </Label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                          <Input
+                            id="signup-password"
+                            type="password"
+                            placeholder="••••••••"
+                            value={signupPassword}
+                            onChange={(e) => setSignupPassword(e.target.value)}
+                            className="pl-11 h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                            required
+                            minLength={6}
+                          />
+                        </div>
+                        <p className="text-xs text-slate-500">Mínimo 6 caracteres</p>
                       </div>
-                      <p className="text-xs text-slate-500">Mínimo 8 caracteres</p>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="pt-2">
-                    <Button 
-                      onClick={handleSignup}
-                      className="w-full h-12 text-base bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group"
-                      disabled={loading}
-                    >
-                      {loading ? "Creando cuenta..." : "Crear Cuenta"}
-                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </CardFooter>
+                    </CardContent>
+                    <CardFooter className="pt-2">
+                      <Button 
+                        type="submit"
+                        className="w-full h-12 text-base bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group"
+                        disabled={loading}
+                      >
+                        {loading ? "Creando cuenta..." : "Crear Cuenta"}
+                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </CardFooter>
+                  </form>
                 </Card>
               </TabsContent>
             </Tabs>

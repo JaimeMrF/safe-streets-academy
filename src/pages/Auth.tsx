@@ -30,22 +30,32 @@ const Auth = () => {
   }, []);
 
   const checkUserSession = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) {
-      // Verificar el rol del usuario
-      const { data: userRole } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .single();
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        // Verificar el rol del usuario
+        const { data: userRole, error } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .limit(1)
+          .maybeSingle();
 
-      if (userRole?.role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (userRole?.role === "teacher") {
-        navigate("/teacher/dashboard");
-      } else {
-        navigate("/courses");
+        if (error) {
+          console.error("Error al verificar rol:", error);
+          return;
+        }
+
+        if (userRole?.role === "admin") {
+          navigate("/admin/dashboard", { replace: true });
+        } else if (userRole?.role === "teacher") {
+          navigate("/teacher/dashboard", { replace: true });
+        } else if (userRole?.role === "student") {
+          navigate("/courses", { replace: true });
+        }
       }
+    } catch (error) {
+      console.error("Error en checkUserSession:", error);
     }
   };
 
@@ -53,38 +63,51 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: loginEmail,
-      password: loginPassword,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginEmail,
+        password: loginPassword,
+      });
 
-    if (error) {
-      toast.error(error.message);
-      setLoading(false);
-      return;
-    }
-
-    if (data.user) {
-      // Verificar el rol del usuario
-      const { data: userRole } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", data.user.id)
-        .single();
-
-      if (userRole?.role === "admin") {
-        toast.success("¡Bienvenido Administrador!");
-        navigate("/admin/dashboard");
-      } else if (userRole?.role === "teacher") {
-        toast.success("¡Bienvenido Profesor!");
-        navigate("/teacher/dashboard");
-      } else {
-        toast.success("¡Bienvenido de vuelta!");
-        navigate("/courses");
+      if (error) {
+        toast.error(error.message);
+        setLoading(false);
+        return;
       }
-    }
 
-    setLoading(false);
+      if (data.user) {
+        // Verificar el rol del usuario
+        const { data: userRole, error: roleError } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", data.user.id)
+          .limit(1)
+          .maybeSingle();
+
+        if (roleError) {
+          console.error("Error al verificar rol:", roleError);
+          toast.error("Error al verificar permisos");
+          setLoading(false);
+          return;
+        }
+
+        if (userRole?.role === "admin") {
+          toast.success("¡Bienvenido Administrador!");
+          navigate("/admin/dashboard", { replace: true });
+        } else if (userRole?.role === "teacher") {
+          toast.success("¡Bienvenido Profesor!");
+          navigate("/teacher/dashboard", { replace: true });
+        } else {
+          toast.success("¡Bienvenido de vuelta!");
+          navigate("/courses", { replace: true });
+        }
+      }
+    } catch (error) {
+      console.error("Error en login:", error);
+      toast.error("Error al iniciar sesión");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -113,15 +136,18 @@ const Auth = () => {
     if (authData.user) {
       const { error: profileError } = await supabase
         .from("profiles")
-        .insert({
+        .upsert({
           id: authData.user.id,
           email: signupEmail,
           first_name: firstName,
           last_name: lastName,
           education_level: educationLevel,
+        }, {
+          onConflict: "id"
         });
 
       if (profileError) {
+        console.error("Error al crear el perfil:", profileError);
         toast.error("Error al crear el perfil");
         setLoading(false);
         return;
@@ -129,9 +155,11 @@ const Auth = () => {
 
       const { error: roleError } = await supabase
         .from("user_roles")
-        .insert({
+        .upsert({
           user_id: authData.user.id,
           role: "student",
+        }, {
+          onConflict: "user_id"
         });
 
       if (roleError) {

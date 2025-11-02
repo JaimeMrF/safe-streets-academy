@@ -34,7 +34,8 @@ const TeacherRegistration = () => {
         .from("user_roles")
         .select("role")
         .eq("user_id", user.id)
-        .single();
+        .limit(1)
+        .maybeSingle();
 
       if (userRole?.role !== "admin") {
         toast.error("Solo los administradores pueden crear profesores");
@@ -65,15 +66,18 @@ const TeacherRegistration = () => {
         // Crear perfil
         const { error: profileError } = await supabase
           .from("profiles")
-          .insert({
+          .upsert({
             id: authData.user.id,
             email: email,
             first_name: firstName,
             last_name: lastName,
             education_level: "bachillerato", // No importa para profesores
+          }, {
+            onConflict: "id"
           });
 
         if (profileError) {
+          console.error("Error al crear perfil:", profileError);
           toast.error("Error al crear el perfil del profesor");
           setLoading(false);
           return;
@@ -82,12 +86,15 @@ const TeacherRegistration = () => {
         // Asignar rol de profesor
         const { error: roleError } = await supabase
           .from("user_roles")
-          .insert({
+          .upsert({
             user_id: authData.user.id,
             role: "teacher",
+          }, {
+            onConflict: "user_id"
           });
 
         if (roleError) {
+          console.error("Error al asignar rol:", roleError);
           toast.error("Error al asignar rol de profesor");
           setLoading(false);
           return;

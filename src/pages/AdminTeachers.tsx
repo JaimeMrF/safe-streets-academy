@@ -174,7 +174,7 @@ const AdminTeachers = () => {
                 <GraduationCap className="w-16 h-16 text-slate-300 mx-auto mb-4" />
                 <p className="text-slate-600 text-lg mb-4">No hay profesores registrados</p>
                 <Button
-                  onClick={() => navigate("/teacher/registration")}
+                  onClick={() => navigate("/teacher/register")}
                   className="bg-gradient-to-r from-purple-600 to-pink-600"
                 >
                   <UserPlus className="w-4 h-4 mr-2" />

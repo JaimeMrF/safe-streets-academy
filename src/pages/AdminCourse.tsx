@@ -92,7 +92,7 @@ const AdminCourses = () => {
   };
 
   const filteredCourses = courses.filter(course =>
-    course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    course.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -146,7 +146,7 @@ const AdminCourses = () => {
                 </div>
               </div>
               <Button
-                onClick={() => toast.info("Función de crear curso próximamente")}
+                onClick={() => navigate("/admin/courses/new")}
                 className="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -171,7 +171,7 @@ const AdminCourses = () => {
                 <BookOpen className="w-16 h-16 text-slate-300 mx-auto mb-4" />
                 <p className="text-slate-600 text-lg mb-4">No hay cursos disponibles</p>
                 <Button
-                  onClick={() => toast.info("Función de crear curso próximamente")}
+                  onClick={() => navigate("/admin/courses/new")}
                   className="bg-gradient-to-r from-pink-600 to-rose-600"
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -232,7 +232,7 @@ const AdminCourses = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => toast.info("Función de editar próximamente")}
+                              onClick={() => navigate(`/admin/courses/edit/${course.id}`)}
                               className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
                             >
                               <Edit className="w-4 h-4" />

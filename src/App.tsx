@@ -22,6 +22,9 @@ import AdminStudents from "./pages/AdminStudents";
 import AdminSettings from "./pages/AdminSettings";
 import AdminReports from "./pages/AdminReports";
 import AdminTeachers from "./pages/AdminTeachers";
+import AdminCourses from "./pages/AdminCourse";
+import AdminCourseForm from "./pages/AdminCourseForm";
+import AdminRouteForm from "./pages/AdminRouteForm";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +40,11 @@ const App = () => (
           <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="/admin/students" element={<AdminStudents />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/courses" element={<AdminCourses />} />
+          <Route path="/admin/courses/new" element={<AdminCourseForm />} />
+          <Route path="/admin/courses/edit/:courseId" element={<AdminCourseForm />} />
+          <Route path="/admin/routes/new" element={<AdminRouteForm />} />
+          <Route path="/admin/routes/edit/:routeId" element={<AdminRouteForm />} />
           <Route path="/teacher/student/:studentId" element={<StudentDetail />} />
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />

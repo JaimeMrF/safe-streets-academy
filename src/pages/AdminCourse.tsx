@@ -12,10 +12,11 @@ import { toast } from "sonner";
 
 interface Course {
   id: string;
-  title: string;
+  name: string;
   description: string;
   education_level: string;
-  image_url: string;
+  icon: string;
+  color: string;
   created_at: string;
 }
 
@@ -194,17 +195,14 @@ const AdminCourses = () => {
                       <TableRow key={course.id}>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-pink-400 to-rose-400">
-                              {course.image_url ? (
-                                <img src={course.image_url} alt={course.title} className="w-full h-full object-cover" />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center">
-                                  <BookOpen className="w-6 h-6 text-white" />
-                                </div>
-                              )}
+                            <div 
+                              className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl"
+                              style={{ backgroundColor: course.color }}
+                            >
+                              {course.icon}
                             </div>
                             <div>
-                              <p className="font-medium text-slate-900">{course.title}</p>
+                              <p className="font-medium text-slate-900">{course.name}</p>
                             </div>
                           </div>
                         </TableCell>

@@ -27,7 +27,7 @@ const Model3DViewer = () => {
             <div className="relative" style={{ paddingBottom: "75%" }}>
               <iframe
                 className="absolute top-0 left-0 w-full h-full rounded-lg"
-                src="https://sketchfab.com/models/URL_DEL_MODELO/embed"
+                src="https://sketchfab.com/models/a643a6b86d5a4955af17d4f091a55090/embed"
                 title="Modelo 3D Interactivo"
                 allow="autoplay; fullscreen; vr"
               />

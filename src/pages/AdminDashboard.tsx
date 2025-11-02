@@ -43,7 +43,8 @@ const AdminDashboard = () => {
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
-      .single();
+      .limit(1)
+      .maybeSingle();
 
     if (userRole?.role !== "admin") {
       toast.error("No tienes permisos de administrador");

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShieldCheck, UserCircle, GraduationCap, Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
+import { ShieldCheck, UserCircle, GraduationCap, Mail, Lock, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
 const Auth = () => {
@@ -24,7 +24,6 @@ const Auth = () => {
   const [lastName, setLastName] = useState("");
   const [educationLevel, setEducationLevel] = useState<"preescolar" | "primaria" | "secundaria" | "bachillerato">("primaria");
 
-  // Verificar si ya hay sesión al cargar
   useEffect(() => {
     checkUserSession();
   }, []);
@@ -33,7 +32,6 @@ const Auth = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        // Verificar el rol del usuario
         const { data: userRole, error } = await supabase
           .from("user_roles")
           .select("role")
@@ -76,7 +74,6 @@ const Auth = () => {
       }
 
       if (data.user) {
-        // Verificar el rol del usuario
         const { data: userRole, error: roleError } = await supabase
           .from("user_roles")
           .select("role")
@@ -92,13 +89,13 @@ const Auth = () => {
         }
 
         if (userRole?.role === "admin") {
-          toast.success("¡Bienvenido Administrador!");
+          toast.success("Bienvenido Administrador");
           navigate("/admin/dashboard", { replace: true });
         } else if (userRole?.role === "teacher") {
-          toast.success("¡Bienvenido Profesor!");
+          toast.success("Bienvenido Profesor");
           navigate("/teacher/dashboard", { replace: true });
         } else {
-          toast.success("¡Bienvenido de vuelta!");
+          toast.success("Sesión iniciada correctamente");
           navigate("/courses", { replace: true });
         }
       }
@@ -168,7 +165,7 @@ const Auth = () => {
         return;
       }
 
-      toast.success("¡Cuenta creada exitosamente!");
+      toast.success("Cuenta creada exitosamente");
       navigate("/courses");
     }
 
@@ -176,138 +173,128 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
-        <div className="absolute top-40 right-10 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-8 left-1/2 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="border-b border-gray-200 bg-white">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 bg-blue-600 rounded flex items-center justify-center text-white font-bold">
+              VS
+            </div>
+            <span className="text-lg font-bold text-gray-900">ViaSafe Educación</span>
+          </div>
+        </div>
+      </header>
 
-      <div className="absolute top-10 left-10 text-blue-200 opacity-50">
-        <ShieldCheck className="w-32 h-32" />
-      </div>
-      <div className="absolute bottom-10 right-10 text-purple-200 opacity-50">
-        <GraduationCap className="w-32 h-32" />
-      </div>
-
-      <div className="relative min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
-          <div className="hidden lg:block space-y-8 animate-fade-in">
+      <div className="min-h-[calc(100vh-73px)] flex items-center justify-center p-4 py-12">
+        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Column - Information */}
+          <div className="hidden lg:block space-y-8">
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full text-sm font-medium text-blue-900">
-                <Sparkles className="w-4 h-4" />
-                <span>Educación vial del futuro</span>
-              </div>
-              
-              <h1 className="text-6xl font-extrabold leading-tight">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 animate-gradient">
-                  Aprende
-                </span>
-                <br />
-                <span className="text-slate-800">seguridad vial</span>
-                <br />
-                <span className="text-slate-600">de forma divertida</span>
+              <h1 className="text-5xl font-bold text-gray-900 leading-tight">
+                Plataforma de Educación Vial
               </h1>
-              
-              <p className="text-xl text-slate-600 leading-relaxed">
-                Únete a miles de estudiantes que están aprendiendo las mejores prácticas de seguridad vial con contenido interactivo y gamificado.
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Acceda a contenido educativo de calidad para aprender las mejores prácticas de seguridad vial.
               </p>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl">
-                  <ShieldCheck className="w-6 h-6 text-white" />
+              <div className="flex items-start gap-4 p-5 bg-white rounded-lg border border-gray-200">
+                <div className="p-3 bg-blue-100 rounded-lg flex-shrink-0">
+                  <ShieldCheck className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800 mb-1">Contenido Certificado</h3>
-                  <p className="text-sm text-slate-600">Aprobado por expertos en seguridad vial</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Contenido Certificado</h3>
+                  <p className="text-sm text-gray-600">Material educativo aprobado por expertos en seguridad vial y pedagogía</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 p-4 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300">
-                <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl">
-                  <GraduationCap className="w-6 h-6 text-white" />
+              <div className="flex items-start gap-4 p-5 bg-white rounded-lg border border-gray-200">
+                <div className="p-3 bg-blue-100 rounded-lg flex-shrink-0">
+                  <GraduationCap className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800 mb-1">Aprende Jugando</h3>
-                  <p className="text-sm text-slate-600">Juegos interactivos y experiencias 3D</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Aprendizaje Estructurado</h3>
+                  <p className="text-sm text-gray-600">Cursos organizados por nivel educativo con seguimiento de progreso</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-5 bg-white rounded-lg border border-gray-200">
+                <div className="p-3 bg-blue-100 rounded-lg flex-shrink-0">
+                  <UserCircle className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Perfil Personalizado</h3>
+                  <p className="text-sm text-gray-600">Contenido adaptado a su edad y nivel de conocimiento</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="w-full animate-slide-up">
-            <div className="text-center mb-8 lg:hidden">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl shadow-2xl mb-4 transform hover:rotate-12 transition-transform duration-300">
-                <span className="text-white font-bold text-2xl">VS</span>
-              </div>
-              <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-                ViaSafe Educación
-              </h2>
-            </div>
-
+          {/* Right Column - Auth Forms */}
+          <div className="w-full">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-white/50 backdrop-blur-sm p-1.5 rounded-2xl shadow-lg">
+              <TabsList className="grid w-full grid-cols-2 bg-white border border-gray-200 p-1">
                 <TabsTrigger 
                   value="login"
-                  className="rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
                 >
                   Iniciar Sesión
                 </TabsTrigger>
                 <TabsTrigger 
                   value="signup"
-                  className="rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
                 >
                   Registrarse
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="login" className="mt-6">
-                <Card className="border-2 border-white/50 shadow-2xl backdrop-blur-sm bg-white/90">
+                <Card className="border border-gray-200 shadow-sm">
                   <CardHeader className="space-y-3 pb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                      <UserCircle className="w-8 h-8 text-white" />
+                    <div className="w-14 h-14 bg-blue-600 rounded-lg flex items-center justify-center mx-auto">
+                      <UserCircle className="w-7 h-7 text-white" />
                     </div>
-                    <CardTitle className="text-3xl text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-                      ¡Bienvenido de vuelta!
+                    <CardTitle className="text-2xl text-center text-gray-900">
+                      Iniciar Sesión
                     </CardTitle>
-                    <CardDescription className="text-center text-base">
-                      Ingresa tus credenciales para continuar aprendiendo
+                    <CardDescription className="text-center">
+                      Ingrese sus credenciales para acceder a la plataforma
                     </CardDescription>
                   </CardHeader>
                   <form onSubmit={handleLogin}>
-                    <CardContent className="space-y-6">
+                    <CardContent className="space-y-5">
                       <div className="space-y-2">
-                        <Label htmlFor="login-email" className="text-slate-700 font-medium">
+                        <Label htmlFor="login-email" className="text-gray-700 font-medium">
                           Correo Electrónico
                         </Label>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                           <Input
                             id="login-email"
                             type="email"
-                            placeholder="tu@email.com"
+                            placeholder="correo@ejemplo.com"
                             value={loginEmail}
                             onChange={(e) => setLoginEmail(e.target.value)}
-                            className="pl-11 h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300"
+                            className="pl-11 h-11 border-gray-300 focus:border-blue-600"
                             required
                           />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="login-password" className="text-slate-700 font-medium">
+                        <Label htmlFor="login-password" className="text-gray-700 font-medium">
                           Contraseña
                         </Label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                           <Input
                             id="login-password"
                             type="password"
                             placeholder="••••••••"
                             value={loginPassword}
                             onChange={(e) => setLoginPassword(e.target.value)}
-                            className="pl-11 h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-300"
+                            className="pl-11 h-11 border-gray-300 focus:border-blue-600"
                             required
                           />
                         </div>
@@ -316,17 +303,17 @@ const Auth = () => {
                         type="button"
                         className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
                       >
-                        ¿Olvidaste tu contraseña?
+                        ¿Olvidó su contraseña?
                       </button>
                     </CardContent>
                     <CardFooter className="flex flex-col gap-4 pt-2">
                       <Button 
                         type="submit"
-                        className="w-full h-12 text-base bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group"
+                        className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white"
                         disabled={loading}
                       >
                         {loading ? "Iniciando..." : "Iniciar Sesión"}
-                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="ml-2 w-4 h-4" />
                       </Button>
                     </CardFooter>
                   </form>
@@ -334,109 +321,109 @@ const Auth = () => {
               </TabsContent>
 
               <TabsContent value="signup" className="mt-6">
-                <Card className="border-2 border-white/50 shadow-2xl backdrop-blur-sm bg-white/90">
+                <Card className="border border-gray-200 shadow-sm">
                   <CardHeader className="space-y-3 pb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                      <GraduationCap className="w-8 h-8 text-white" />
+                    <div className="w-14 h-14 bg-blue-600 rounded-lg flex items-center justify-center mx-auto">
+                      <GraduationCap className="w-7 h-7 text-white" />
                     </div>
-                    <CardTitle className="text-3xl text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
-                      ¡Comienza tu aventura!
+                    <CardTitle className="text-2xl text-center text-gray-900">
+                      Crear Cuenta
                     </CardTitle>
-                    <CardDescription className="text-center text-base">
-                      Crea tu cuenta y comienza a aprender de forma divertida
+                    <CardDescription className="text-center">
+                      Complete el formulario para registrarse en la plataforma
                     </CardDescription>
                   </CardHeader>
                   <form onSubmit={handleSignup}>
-                    <CardContent className="space-y-5">
+                    <CardContent className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="first-name" className="text-slate-700 font-medium">
+                          <Label htmlFor="first-name" className="text-gray-700 font-medium">
                             Nombre
                           </Label>
                           <Input
                             id="first-name"
-                            placeholder="Juan"
+                            placeholder="Nombre"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
-                            className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                            className="h-10 border-gray-300 focus:border-blue-600"
                             required
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="last-name" className="text-slate-700 font-medium">
+                          <Label htmlFor="last-name" className="text-gray-700 font-medium">
                             Apellido
                           </Label>
                           <Input
                             id="last-name"
-                            placeholder="Pérez"
+                            placeholder="Apellido"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
-                            className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                            className="h-10 border-gray-300 focus:border-blue-600"
                             required
                           />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="education-level" className="text-slate-700 font-medium">
+                        <Label htmlFor="education-level" className="text-gray-700 font-medium">
                           Nivel Educativo
                         </Label>
                         <Select value={educationLevel} onValueChange={(value: "preescolar" | "primaria" | "secundaria" | "bachillerato") => setEducationLevel(value)}>
-                          <SelectTrigger className="h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl">
+                          <SelectTrigger className="h-10 border-gray-300 focus:border-blue-600">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="preescolar">🚦 Preescolar (3-5 años)</SelectItem>
-                            <SelectItem value="primaria">🚸 Primaria (6-11 años)</SelectItem>
-                            <SelectItem value="secundaria">🚴 Secundaria (12-14 años)</SelectItem>
-                            <SelectItem value="bachillerato">🚗 Bachillerato (15-18 años)</SelectItem>
+                            <SelectItem value="preescolar">Preescolar (3-5 años)</SelectItem>
+                            <SelectItem value="primaria">Primaria (6-11 años)</SelectItem>
+                            <SelectItem value="secundaria">Secundaria (12-14 años)</SelectItem>
+                            <SelectItem value="bachillerato">Bachillerato (15-18 años)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="signup-email" className="text-slate-700 font-medium">
+                        <Label htmlFor="signup-email" className="text-gray-700 font-medium">
                           Correo Electrónico
                         </Label>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                           <Input
                             id="signup-email"
                             type="email"
-                            placeholder="tu@email.com"
+                            placeholder="correo@ejemplo.com"
                             value={signupEmail}
                             onChange={(e) => setSignupEmail(e.target.value)}
-                            className="pl-11 h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                            className="pl-11 h-10 border-gray-300 focus:border-blue-600"
                             required
                           />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="signup-password" className="text-slate-700 font-medium">
+                        <Label htmlFor="signup-password" className="text-gray-700 font-medium">
                           Contraseña
                         </Label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                           <Input
                             id="signup-password"
                             type="password"
                             placeholder="••••••••"
                             value={signupPassword}
                             onChange={(e) => setSignupPassword(e.target.value)}
-                            className="pl-11 h-11 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-300"
+                            className="pl-11 h-10 border-gray-300 focus:border-blue-600"
                             required
                             minLength={6}
                           />
                         </div>
-                        <p className="text-xs text-slate-500">Mínimo 6 caracteres</p>
+                        <p className="text-xs text-gray-500">Mínimo 6 caracteres</p>
                       </div>
                     </CardContent>
                     <CardFooter className="pt-2">
                       <Button 
                         type="submit"
-                        className="w-full h-12 text-base bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group"
+                        className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white"
                         disabled={loading}
                       >
                         {loading ? "Creando cuenta..." : "Crear Cuenta"}
-                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="ml-2 w-4 h-4" />
                       </Button>
                     </CardFooter>
                   </form>
@@ -444,8 +431,8 @@ const Auth = () => {
               </TabsContent>
             </Tabs>
 
-            <p className="text-center text-sm text-slate-500 mt-6">
-              Al registrarte, aceptas nuestros{" "}
+            <p className="text-center text-sm text-gray-500 mt-6">
+              Al registrarse, acepta nuestros{" "}
               <button className="text-blue-600 hover:underline">Términos de Servicio</button>
               {" "}y{" "}
               <button className="text-blue-600 hover:underline">Política de Privacidad</button>
@@ -453,45 +440,6 @@ const Auth = () => {
           </div>
         </div>
       </div>
-
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes slide-up {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes blob {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        .animate-fade-in {
-          animation: fade-in 1s ease-out forwards;
-        }
-        .animate-slide-up {
-          animation: slide-up 0.8s ease-out forwards;
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animate-gradient {
-          background-size: 200% 200%;
-          animation: gradient 3s ease infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-      `}} />
     </div>
   );
 };

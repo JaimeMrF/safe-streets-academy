@@ -1,4 +1,3 @@
-// src/pages/AdminDashboard.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,19 +56,16 @@ const AdminDashboard = () => {
 
   const loadStats = async () => {
     try {
-      // Contar estudiantes
       const { count: studentsCount } = await supabase
         .from("user_roles")
         .select("*", { count: "exact", head: true })
         .eq("role", "student");
 
-      // Contar profesores
       const { count: teachersCount } = await supabase
         .from("user_roles")
         .select("*", { count: "exact", head: true })
         .eq("role", "teacher");
 
-      // Contar cursos
       const { count: coursesCount } = await supabase
         .from("courses")
         .select("*", { count: "exact", head: true });
@@ -92,37 +88,37 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-600">Verificando permisos...</p>
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Verificando permisos</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-purple-100 sticky top-0 z-50">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
                 <Shield className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+                <h1 className="text-xl font-bold text-gray-900">
                   Panel de Administración
                 </h1>
-                <p className="text-sm text-slate-600">ViaSafe Educación</p>
+                <p className="text-sm text-gray-600">ViaSafe Educación</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
                 onClick={() => navigate("/courses")}
-                className="hidden sm:flex"
+                className="hidden sm:flex border-gray-300"
               >
                 <BookOpen className="w-4 h-4 mr-2" />
                 Ver Cursos
@@ -130,7 +126,7 @@ const AdminDashboard = () => {
               <Button
                 variant="outline"
                 onClick={handleLogout}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="border-gray-300 text-red-600 hover:text-red-700 hover:bg-red-50"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Cerrar Sesión
@@ -143,151 +139,157 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
+          <Card className="border border-gray-200 bg-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">
+              <CardTitle className="text-sm font-medium text-gray-600">
                 Total Estudiantes
               </CardTitle>
               <Users className="w-5 h-5 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-blue-600">
+              <div className="text-3xl font-bold text-gray-900">
                 {stats.totalStudents}
               </div>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Usuarios registrados como estudiantes
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-white">
+          <Card className="border border-gray-200 bg-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">
+              <CardTitle className="text-sm font-medium text-gray-600">
                 Total Profesores
               </CardTitle>
-              <GraduationCap className="w-5 h-5 text-purple-600" />
+              <GraduationCap className="w-5 h-5 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-purple-600">
+              <div className="text-3xl font-bold text-gray-900">
                 {stats.totalTeachers}
               </div>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Profesores activos en la plataforma
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-pink-200 bg-gradient-to-br from-pink-50 to-white">
+          <Card className="border border-gray-200 bg-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">
+              <CardTitle className="text-sm font-medium text-gray-600">
                 Total Cursos
               </CardTitle>
-              <BookOpen className="w-5 h-5 text-pink-600" />
+              <BookOpen className="w-5 h-5 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-pink-600">
+              <div className="text-3xl font-bold text-gray-900">
                 {stats.totalCourses}
               </div>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Cursos disponibles en la plataforma
               </p>
             </CardContent>
           </Card>
         </div>
 
+        {/* Section Title */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Gestión del Sistema</h2>
+          <p className="text-gray-600">Acceda a las diferentes funciones administrativas</p>
+        </div>
+
         {/* Action Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Registrar Profesor */}
-          <Card className="border-2 border-white/50 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+          <Card className="border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer bg-white"
                 onClick={() => navigate("/teacher/register")}>
             <CardHeader>
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <UserPlus className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <UserPlus className="w-6 h-6 text-blue-600" />
               </div>
-              <CardTitle className="text-center text-xl">
+              <CardTitle className="text-center text-lg text-gray-900">
                 Registrar Profesor
               </CardTitle>
-              <CardDescription className="text-center">
+              <CardDescription className="text-center text-gray-600">
                 Crear una nueva cuenta de profesor en el sistema
               </CardDescription>
             </CardHeader>
           </Card>
 
           {/* Ver Estudiantes */}
-          <Card className="border-2 border-white/50 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+          <Card className="border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer bg-white"
                 onClick={() => navigate("/admin/students")}>
             <CardHeader>
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <Users className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Users className="w-6 h-6 text-blue-600" />
               </div>
-              <CardTitle className="text-center text-xl">
+              <CardTitle className="text-center text-lg text-gray-900">
                 Ver Estudiantes
               </CardTitle>
-              <CardDescription className="text-center">
+              <CardDescription className="text-center text-gray-600">
                 Lista completa de estudiantes registrados
               </CardDescription>
             </CardHeader>
           </Card>
 
           {/* Ver Profesores */}
-          <Card className="border-2 border-white/50 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+          <Card className="border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer bg-white"
                 onClick={() => navigate("/admin/teachers")}>
             <CardHeader>
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <GraduationCap className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <GraduationCap className="w-6 h-6 text-blue-600" />
               </div>
-              <CardTitle className="text-center text-xl">
+              <CardTitle className="text-center text-lg text-gray-900">
                 Ver Profesores
               </CardTitle>
-              <CardDescription className="text-center">
+              <CardDescription className="text-center text-gray-600">
                 Gestionar cuentas de profesores
               </CardDescription>
             </CardHeader>
           </Card>
 
           {/* Gestionar Cursos */}
-          <Card className="border-2 border-white/50 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+          <Card className="border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer bg-white"
                 onClick={() => navigate("/admin/courses")}>
             <CardHeader>
-              <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <BookOpen className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <BookOpen className="w-6 h-6 text-blue-600" />
               </div>
-              <CardTitle className="text-center text-xl">
+              <CardTitle className="text-center text-lg text-gray-900">
                 Gestionar Cursos
               </CardTitle>
-              <CardDescription className="text-center">
+              <CardDescription className="text-center text-gray-600">
                 Crear, editar y administrar cursos
               </CardDescription>
             </CardHeader>
           </Card>
 
           {/* Reportes */}
-          <Card className="border-2 border-white/50 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+          <Card className="border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer bg-white"
                 onClick={() => navigate("/admin/reports")}>
             <CardHeader>
-              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <BarChart3 className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <BarChart3 className="w-6 h-6 text-blue-600" />
               </div>
-              <CardTitle className="text-center text-xl">
+              <CardTitle className="text-center text-lg text-gray-900">
                 Reportes
               </CardTitle>
-              <CardDescription className="text-center">
+              <CardDescription className="text-center text-gray-600">
                 Ver estadísticas y reportes del sistema
               </CardDescription>
             </CardHeader>
           </Card>
 
           {/* Configuración */}
-          <Card className="border-2 border-white/50 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+          <Card className="border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer bg-white"
                 onClick={() => navigate("/admin/settings")}>
             <CardHeader>
-              <div className="w-14 h-14 bg-gradient-to-br from-slate-500 to-gray-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <Settings className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Settings className="w-6 h-6 text-blue-600" />
               </div>
-              <CardTitle className="text-center text-xl">
+              <CardTitle className="text-center text-lg text-gray-900">
                 Configuración
               </CardTitle>
-              <CardDescription className="text-center">
+              <CardDescription className="text-center text-gray-600">
                 Ajustes generales del sistema
               </CardDescription>
             </CardHeader>

@@ -1,5 +1,14 @@
 # 🚀 GUÍA DE PUESTA EN PRODUCCIÓN
 
+## ⚠️ IMPORTANTE: DESARROLLO LOCAL vs PRODUCCIÓN
+
+**Este proyecto USA Supabase Cloud vía Lovable actualmente.**
+
+Si quieres desarrollo 100% LOCAL y deployment SIN Lovable Cloud:
+👉 **Lee `DEPLOY-GRATIS.md`** - Guía completa de deployment gratuito
+
+---
+
 ## 📋 SEPARACIÓN BACKEND / FRONTEND
 
 ### ✅ FRONTEND (React + Vite)

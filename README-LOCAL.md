@@ -291,10 +291,10 @@ Si encuentras algún problema:
 
 ## ✅ CHECKLIST DE VERIFICACIÓN
 
-- [ ] Docker Desktop instalado y corriendo
-- [ ] Node.js 18+ instalado
-- [ ] Supabase CLI instalado (`npm install -g supabase`)
-- [ ] `npm install` ejecutado
+- [x] Docker Desktop instalado y corriendo
+- [x] Node.js 18+ instalado
+- [x] Supabase CLI instalado (`npm install -g supabase`)
+- [x] `npm install` ejecutado
 - [ ] `supabase start` ejecutado (guarda las credenciales)
 - [ ] Archivo `.env.local` creado con las credenciales
 - [ ] `npm run dev` ejecutado

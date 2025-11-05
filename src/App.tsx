@@ -26,7 +26,10 @@ import AdminCourses from "./pages/AdminCourse";
 import AdminCourseForm from "./pages/AdminCourseForm";
 import AdminRouteForm from "./pages/AdminRouteForm";
 import TrafficSignsIntro from "./pages/games/TrafficSignsIntro";
-
+import TrafficSignsDesarrollo from "./pages/games/TrafficSignsDesarrollo";
+import TrafficSignsAplicacion from "./pages/games/TrafficSignsAplicacion";
+import TrafficSignsCertificacion from './pages/games/TrafficSignsCertificacion';
+import PedestrianRulesIntro from "./pages/games/PedestrianRulesIntro";
 
 const queryClient = new QueryClient();
 
@@ -37,7 +40,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          
+          <Route path="/game/pedestrian-rules-intro/:routeId" element={<PedestrianRulesIntro />} />
+          <Route path="/game/traffic-signs-certificacion/:routeId" element={<TrafficSignsCertificacion />}/>
+          <Route path="/game/traffic-signs-desarrollo/:routeId" element={<TrafficSignsDesarrollo />} />
+          <Route path="/game/traffic-signs-aplicacion/:routeId" element={<TrafficSignsAplicacion />} />
           <Route path="/game/traffic-signs-intro/:routeId" element={<TrafficSignsIntro />} />
           <Route path="/admin/teachers" element={<AdminTeachers />} />
           <Route path="/admin/reports" element={<AdminReports />} />

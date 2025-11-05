@@ -15,11 +15,20 @@ interface Course {
   color: string;
 }
 
+interface CourseProgress {
+  courseId: string;
+  completedRoutes: number;
+  totalRoutes: number;
+  percentage: number;
+}
+
 const CourseSelector = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState<Course[]>([]);
+  const [courseProgress, setCourseProgress] = useState<Record<string, CourseProgress>>({});
   const [userLevel, setUserLevel] = useState("");
   const [userName, setUserName] = useState("");
+  const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,6 +38,8 @@ const CourseSelector = () => {
         navigate("/auth");
         return;
       }
+
+      setUserId(user.id);
 
       const { data: userRole, error: roleError } = await supabase
         .from("user_roles")
@@ -80,6 +91,9 @@ const CourseSelector = () => {
           if (coursesData) {
             console.log(`Cursos cargados: ${coursesData.length}`, coursesData);
             setCourses(coursesData);
+            
+            // Calcular progreso para cada curso
+            await calculateProgress(coursesData, user.id);
           } else {
             console.log("No se encontraron cursos");
             setCourses([]);
@@ -98,6 +112,59 @@ const CourseSelector = () => {
     checkAuth();
   }, [navigate]);
 
+  const calculateProgress = async (coursesData: Course[], studentId: string) => {
+    const progressMap: Record<string, CourseProgress> = {};
+
+    for (const course of coursesData) {
+      // Obtener todas las rutas del curso
+      const { data: routes, error: routesError } = await supabase
+        .from("routes")
+        .select("id")
+        .eq("course_id", course.id);
+
+      if (routesError) {
+        console.error("Error al obtener rutas:", routesError);
+        continue;
+      }
+
+      const totalRoutes = routes?.length || 0;
+
+      if (totalRoutes === 0) {
+        progressMap[course.id] = {
+          courseId: course.id,
+          completedRoutes: 0,
+          totalRoutes: 0,
+          percentage: 0
+        };
+        continue;
+      }
+
+      // Obtener rutas completadas del estudiante
+      const { data: progress, error: progressError } = await supabase
+        .from("student_progress")
+        .select("route_id, completed")
+        .eq("student_id", studentId)
+        .in("route_id", routes.map(r => r.id))
+        .eq("completed", true);
+
+      if (progressError) {
+        console.error("Error al obtener progreso:", progressError);
+      }
+
+      const completedRoutes = progress?.length || 0;
+      const percentage = Math.round((completedRoutes / totalRoutes) * 100);
+
+      progressMap[course.id] = {
+        courseId: course.id,
+        completedRoutes,
+        totalRoutes,
+        percentage
+      };
+    }
+
+    setCourseProgress(progressMap);
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast.success("Sesión cerrada");
@@ -114,6 +181,22 @@ const CourseSelector = () => {
     return labels[level] || level;
   };
 
+  // Calcular estadísticas totales
+  const getTotalStats = () => {
+    const totalCompleted = Object.values(courseProgress).reduce(
+      (sum, progress) => sum + progress.completedRoutes,
+      0
+    );
+    const coursesInProgress = Object.values(courseProgress).filter(
+      (progress) => progress.percentage > 0 && progress.percentage < 100
+    ).length;
+    const coursesCompleted = Object.values(courseProgress).filter(
+      (progress) => progress.percentage === 100
+    ).length;
+
+    return { totalCompleted, coursesInProgress, coursesCompleted };
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 flex items-center justify-center">
@@ -122,12 +205,14 @@ const CourseSelector = () => {
             <div className="absolute inset-0 border-4 border-secondary rounded-full"></div>
             <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
           </div>
-          <p className="text-lg font-semibold mb-2">Verificando permisos</p>
+          <p className="text-lg font-semibold mb-2">Cargando cursos</p>
           <p className="text-sm text-muted-foreground">Por favor espere</p>
         </div>
       </div>
     );
   }
+
+  const stats = getTotalStats();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10">
@@ -205,8 +290,8 @@ const CourseSelector = () => {
                   <Trophy className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">0</p>
-                  <p className="text-sm text-muted-foreground">Logros Obtenidos</p>
+                  <p className="text-2xl font-bold">{stats.coursesCompleted}</p>
+                  <p className="text-sm text-muted-foreground">Cursos Completados</p>
                 </div>
               </div>
             </CardContent>
@@ -219,8 +304,8 @@ const CourseSelector = () => {
                   <Clock className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">0h</p>
-                  <p className="text-sm text-muted-foreground">Tiempo de Estudio</p>
+                  <p className="text-2xl font-bold">{stats.totalCompleted}</p>
+                  <p className="text-sm text-muted-foreground">Lecciones Completadas</p>
                 </div>
               </div>
             </CardContent>
@@ -236,61 +321,74 @@ const CourseSelector = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {courses.map((course) => (
-                <Card 
-                  key={course.id}
-                  className="hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => navigate(`/student/course/${course.id}`)}
-                >
-                  <div 
-                    className="h-2 w-full"
-                    style={{ background: course.color }}
-                  />
-                  <CardHeader className="pb-4">
-                    <div className="flex items-start gap-4">
-                      <div className="text-5xl">
-                        {course.icon}
-                      </div>
-                      <div className="flex-1">
-                        <CardTitle className="text-lg mb-2">
-                          {course.name}
-                        </CardTitle>
-                        <CardDescription className="text-sm line-clamp-2">
-                          {course.description}
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">Progreso</span>
-                          <span className="font-semibold">0%</span>
+              {courses.map((course) => {
+                const progress = courseProgress[course.id] || { 
+                  completedRoutes: 0, 
+                  totalRoutes: 0, 
+                  percentage: 0 
+                };
+
+                return (
+                  <Card 
+                    key={course.id}
+                    className="hover:shadow-lg transition-shadow cursor-pointer"
+                    onClick={() => navigate(`/student/course/${course.id}`)}
+                  >
+                    <div 
+                      className="h-2 w-full"
+                      style={{ background: course.color }}
+                    />
+                    <CardHeader className="pb-4">
+                      <div className="flex items-start gap-4">
+                        <div className="text-5xl">
+                          {course.icon}
                         </div>
-                        <div className="w-full bg-secondary rounded-full h-2">
-                          <div 
-                            className="h-2 rounded-full bg-primary"
-                            style={{ 
-                              width: '0%'
-                            }}
-                          />
+                        <div className="flex-1">
+                          <CardTitle className="text-lg mb-2">
+                            {course.name}
+                          </CardTitle>
+                          <CardDescription className="text-sm line-clamp-2">
+                            {course.description}
+                          </CardDescription>
                         </div>
                       </div>
-                      
-                      <Button 
-                        className="w-full text-white"
-                        style={{ 
-                          background: course.color
-                        }}
-                      >
-                        Comenzar Curso
-                        <ArrowRight className="ml-2 w-4 h-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">Progreso</span>
+                            <span className="font-semibold">
+                              {progress.percentage}% ({progress.completedRoutes}/{progress.totalRoutes})
+                            </span>
+                          </div>
+                          <div className="w-full bg-secondary rounded-full h-2">
+                            <div 
+                              className="h-2 rounded-full transition-all duration-500"
+                              style={{ 
+                                width: `${progress.percentage}%`,
+                                background: course.color
+                              }}
+                            />
+                          </div>
+                        </div>
+                        
+                        <Button 
+                          className="w-full text-white"
+                          style={{ 
+                            background: course.color
+                          }}
+                        >
+                          {progress.percentage === 0 ? 'Comenzar Curso' : 
+                           progress.percentage === 100 ? 'Revisar Curso' : 
+                           'Continuar Curso'}
+                          <ArrowRight className="ml-2 w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </>
           ) : (

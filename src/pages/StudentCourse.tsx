@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, Play, CheckCircle, Lock, Award, Download } from "lucide-react";
+import { ArrowLeft, Play, CheckCircle, Lock, Award, Download, GraduationCap } from "lucide-react";
 import Certificate from "@/components/Certificate";
 import { toast } from "sonner";
 
@@ -17,6 +17,7 @@ interface Route {
   level_order: number;
   game_type: string;
   is_certification_level: boolean;
+  education_level?: string;
 }
 
 interface StudentProgress {
@@ -34,10 +35,10 @@ const StudentCourse = () => {
   const [courseName, setCourseName] = useState("");
   const [routes, setRoutes] = useState<Route[]>([]);
   const [progress, setProgress] = useState<StudentProgress[]>([]);
-
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [showCertificate, setShowCertificate] = useState(false);
+  const [studentEducationLevel, setStudentEducationLevel] = useState<string>("");
   const [studentInfo, setStudentInfo] = useState({
     name: "",
     level: "",
@@ -75,6 +76,18 @@ const StudentCourse = () => {
         return;
       }
 
+      // Load student profile to get education level
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("first_name, last_name, education_level")
+        .eq("id", userId)
+        .single();
+
+      if (profileError) throw profileError;
+      
+      const educationLevel = profile?.education_level || "";
+      setStudentEducationLevel(educationLevel);
+
       // Load course info
       const { data: course, error: courseError } = await supabase
         .from("courses")
@@ -85,12 +98,20 @@ const StudentCourse = () => {
       if (courseError) throw courseError;
       if (course) setCourseName(course.name);
 
-      // Load routes
+      // Load all routes for the course
       const { data: routesData, error: routesError } = await supabase
         .from("routes")
         .select("*")
         .eq("course_id", courseId)
         .order("level_order");
+      
+      // Filter routes by education level on the client side
+      let filteredRoutes = routesData;
+      if (routesData && educationLevel) {
+        filteredRoutes = routesData.filter(route => 
+          !route.education_level || route.education_level === educationLevel
+        );
+      }
 
       if (routesError) throw routesError;
       if (routesData) setRoutes(routesData);
@@ -110,15 +131,7 @@ const StudentCourse = () => {
 
           const completedCount = progressData.filter(p => p.completed).length;
           if (completedCount === routesData.length && completedCount > 0) {
-            const { data: profile, error: profileError } = await supabase
-              .from("profiles")
-              .select("first_name, last_name, education_level")
-              .eq("id", userId)
-              .single();
-
-            if (profileError) {
-              console.error("Error cargando perfil:", profileError);
-            } else if (profile) {
+            if (profile) {
               const avgScore = progressData.reduce((sum, p) => sum + (p.score || 0), 0) / progressData.length;
               const completedProgress = progressData.filter(p => p.completion_date);
               const lastCompletion = completedProgress.length > 0
@@ -149,7 +162,7 @@ const StudentCourse = () => {
     progress.find(p => p.route_id === routeId);
 
   const isRouteLocked = (levelOrder: number) => {
-    if (levelOrder === 1) return false;
+    if (levelOrder === 1 || levelOrder === 5 || levelOrder === 9 || levelOrder === 13) return false;
     const previousRoute = routes.find(r => r.level_order === levelOrder - 1);
     if (!previousRoute) return false;
     const previousProgress = getProgressForRoute(previousRoute.id);
@@ -160,6 +173,16 @@ const StudentCourse = () => {
     if (routes.length === 0) return 0;
     const completed = progress.filter(p => p.completed).length;
     return (completed / routes.length) * 100;
+  };
+
+  const getEducationLevelLabel = (level: string) => {
+    const labels: Record<string, string> = {
+      preescolar: "Preescolar",
+      primaria: "Primaria",
+      secundaria: "Secundaria",
+      bachillerato: "Bachillerato"
+    };
+    return labels[level] || level;
   };
 
   const allCompleted = routes.length > 0 && progress.filter(p => p.completed).length === routes.length;
@@ -184,7 +207,15 @@ const StudentCourse = () => {
         </Button>
 
         <div className="mb-6 md:mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 md:mb-4">{courseName || "Curso"}</h1>
+          <div className="flex items-center gap-3 mb-2 md:mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold">{courseName || "Curso"}</h1>
+            {studentEducationLevel && (
+              <Badge variant="outline" className="gap-1">
+                <GraduationCap className="h-3 w-3" />
+                {getEducationLevelLabel(studentEducationLevel)}
+              </Badge>
+            )}
+          </div>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
             <Progress value={calculateOverallProgress()} className="flex-1 w-full" />
             <span className="text-sm text-muted-foreground whitespace-nowrap">
@@ -280,7 +311,9 @@ const StudentCourse = () => {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No hay niveles disponibles en este curso</p>
+            <p className="text-muted-foreground">
+              No hay niveles disponibles para tu nivel educativo ({getEducationLevelLabel(studentEducationLevel)})
+            </p>
           </div>
         )}
 

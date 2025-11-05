@@ -174,8 +174,8 @@ const QuizGame = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 p-4 md:p-6 flex items-center justify-center">
-      <Card className="w-full max-w-3xl shadow-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 p-4 md:p-6 flex items-center justify-center">
+      <Card className="w-full max-w-3xl shadow-lg">
         <CardHeader className="space-y-4">
           <div className="flex justify-between items-center flex-wrap gap-2">
             <CardTitle className="text-2xl md:text-3xl">Quiz de Seguridad Vial</CardTitle>

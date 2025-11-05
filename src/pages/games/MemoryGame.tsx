@@ -151,7 +151,7 @@ const MemoryGame = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 p-4 md:p-6">
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div className="flex flex-wrap gap-3 md:gap-6">
@@ -207,7 +207,7 @@ const MemoryGame = () => {
         </div>
 
         {matched.length === cards.length && cards.length > 0 && (
-          <div className="text-center mt-8 p-6 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg border-2 border-primary">
+          <div className="text-center mt-8 p-6 bg-primary/10 rounded-lg border border-primary">
             <Trophy className="h-16 w-16 mx-auto mb-4 text-primary" />
             <h2 className="text-2xl md:text-3xl font-bold mb-2">¡Excelente! 🎉</h2>
             <p className="text-muted-foreground mb-4">

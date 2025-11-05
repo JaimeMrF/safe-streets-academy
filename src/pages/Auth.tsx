@@ -173,15 +173,18 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-blue-600 rounded flex items-center justify-center text-white font-bold">
-              VS
+            <div className="h-12 w-12 rounded-lg overflow-hidden flex items-center justify-center bg-primary">
+              <span className="text-2xl font-bold text-primary-foreground">ITAL</span>
             </div>
-            <span className="text-lg font-bold text-gray-900">ViaSafe Educación</span>
+            <div>
+              <span className="text-lg font-bold text-foreground">Instituto Técnico Alfonso López</span>
+              <p className="text-xs text-muted-foreground">Ocaña, Norte de Santander</p>
+            </div>
           </div>
         </div>
       </header>
@@ -200,9 +203,9 @@ const Auth = () => {
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-start gap-4 p-5 bg-white rounded-lg border border-gray-200">
-                <div className="p-3 bg-blue-100 rounded-lg flex-shrink-0">
-                  <ShieldCheck className="w-6 h-6 text-blue-600" />
+              <div className="flex items-start gap-4 p-5 bg-card rounded-lg border">
+                <div className="p-3 bg-primary/10 rounded-lg flex-shrink-0">
+                  <ShieldCheck className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Contenido Certificado</h3>
@@ -210,9 +213,9 @@ const Auth = () => {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 p-5 bg-white rounded-lg border border-gray-200">
-                <div className="p-3 bg-blue-100 rounded-lg flex-shrink-0">
-                  <GraduationCap className="w-6 h-6 text-blue-600" />
+              <div className="flex items-start gap-4 p-5 bg-card rounded-lg border">
+                <div className="p-3 bg-primary/10 rounded-lg flex-shrink-0">
+                  <GraduationCap className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Aprendizaje Estructurado</h3>
@@ -220,9 +223,9 @@ const Auth = () => {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 p-5 bg-white rounded-lg border border-gray-200">
-                <div className="p-3 bg-blue-100 rounded-lg flex-shrink-0">
-                  <UserCircle className="w-6 h-6 text-blue-600" />
+              <div className="flex items-start gap-4 p-5 bg-card rounded-lg border">
+                <div className="p-3 bg-primary/10 rounded-lg flex-shrink-0">
+                  <UserCircle className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Perfil Personalizado</h3>
@@ -235,28 +238,28 @@ const Auth = () => {
           {/* Right Column - Auth Forms */}
           <div className="w-full">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-white border border-gray-200 p-1">
+              <TabsList className="grid w-full grid-cols-2 bg-card p-1">
                 <TabsTrigger 
                   value="login"
-                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 >
                   Iniciar Sesión
                 </TabsTrigger>
                 <TabsTrigger 
                   value="signup"
-                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 >
                   Registrarse
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="login" className="mt-6">
-                <Card className="border border-gray-200 shadow-sm">
+                <Card className="shadow-md">
                   <CardHeader className="space-y-3 pb-6">
-                    <div className="w-14 h-14 bg-blue-600 rounded-lg flex items-center justify-center mx-auto">
-                      <UserCircle className="w-7 h-7 text-white" />
+                    <div className="w-14 h-14 bg-primary rounded-lg flex items-center justify-center mx-auto">
+                      <UserCircle className="w-7 h-7 text-primary-foreground" />
                     </div>
-                    <CardTitle className="text-2xl text-center text-gray-900">
+                    <CardTitle className="text-2xl text-center">
                       Iniciar Sesión
                     </CardTitle>
                     <CardDescription className="text-center">
@@ -309,7 +312,7 @@ const Auth = () => {
                     <CardFooter className="flex flex-col gap-4 pt-2">
                       <Button 
                         type="submit"
-                        className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white"
+                        className="w-full h-11"
                         disabled={loading}
                       >
                         {loading ? "Iniciando..." : "Iniciar Sesión"}
@@ -321,12 +324,12 @@ const Auth = () => {
               </TabsContent>
 
               <TabsContent value="signup" className="mt-6">
-                <Card className="border border-gray-200 shadow-sm">
+                <Card className="shadow-md">
                   <CardHeader className="space-y-3 pb-6">
-                    <div className="w-14 h-14 bg-blue-600 rounded-lg flex items-center justify-center mx-auto">
-                      <GraduationCap className="w-7 h-7 text-white" />
+                    <div className="w-14 h-14 bg-primary rounded-lg flex items-center justify-center mx-auto">
+                      <GraduationCap className="w-7 h-7 text-primary-foreground" />
                     </div>
-                    <CardTitle className="text-2xl text-center text-gray-900">
+                    <CardTitle className="text-2xl text-center">
                       Crear Cuenta
                     </CardTitle>
                     <CardDescription className="text-center">

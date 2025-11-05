@@ -94,10 +94,10 @@ const ResourceLibrary = () => {
   const model3DResources = resources.filter(r => r.game_type === "3d-model");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" onClick={() => navigate("/courses")}>
+          <Button variant="outline" onClick={() => navigate("/courses")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Volver a Cursos
           </Button>

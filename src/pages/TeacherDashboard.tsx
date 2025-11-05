@@ -159,27 +159,21 @@ const TeacherDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 flex items-center justify-center">
         <div className="text-center animate-fade-in">
           <div className="relative w-20 h-20 mx-auto mb-6">
-            <div className="absolute inset-0 border-4 border-blue-200 rounded-full"></div>
-            <div className="absolute inset-0 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="absolute inset-0 border-4 border-secondary rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
           </div>
-          <p className="text-lg font-semibold text-slate-700 mb-2">Cargando estudiantes...</p>
-          <p className="text-sm text-slate-500">Espera un momento</p>
+          <p className="text-lg font-semibold mb-2">Cargando estudiantes...</p>
+          <p className="text-sm text-muted-foreground">Espera un momento</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
-        <div className="absolute top-40 right-10 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-8 left-1/2 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 relative overflow-hidden">
 
       <div className="relative p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
@@ -187,29 +181,22 @@ const TeacherDashboard = () => {
           <div className="mb-8 md:mb-12">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
               <div className="space-y-2 animate-fade-in">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="text-6xl animate-wave drop-shadow-lg">👨‍🏫</div>
-                  <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full text-xs font-medium text-purple-900 mb-2">
-                      <GraduationCap className="w-3 h-3" />
-                      <span>Panel de Profesor</span>
-                    </div>
-                    <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 animate-gradient">
-                        ¡Hola, {teacherName.split(' ')[0]}!
-                      </span>
-                    </h1>
-                  </div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full text-xs font-medium mb-2">
+                  <GraduationCap className="w-3 h-3" />
+                  <span>Panel de Profesor</span>
                 </div>
-                <p className="text-lg md:text-xl text-slate-600 max-w-2xl leading-relaxed">
-                  Gestiona y supervisa el progreso de tus <span className="font-bold text-purple-600">estudiantes</span>.
+                <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-2">
+                  Bienvenido, {teacherName.split(' ')[0]}
+                </h1>
+                <p className="text-lg text-muted-foreground max-w-2xl">
+                  Gestiona y supervisa el progreso de tus estudiantes
                 </p>
               </div>
 
-              <div className="flex gap-3 w-full lg:w-auto animate-slide-down">
+              <div className="flex gap-3 w-full lg:w-auto">
                 <Button 
                   onClick={() => navigate("/teacher/courses")}
-                  className="flex-1 lg:flex-none bg-white text-purple-600 hover:bg-purple-50 border-2 border-purple-300 shadow-xl hover:shadow-2xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 font-semibold"
+                  className="flex-1 lg:flex-none"
                 >
                   <GraduationCap className="mr-2 h-5 w-5" />
                   Gestionar Cursos
@@ -217,7 +204,7 @@ const TeacherDashboard = () => {
                 <Button 
                   onClick={handleLogout}
                   variant="outline"
-                  className="flex-1 lg:flex-none bg-white hover:bg-red-50 border-2 border-slate-300 hover:border-red-400 shadow-xl hover:shadow-2xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 text-slate-700 hover:text-red-600 font-semibold"
+                  className="flex-1 lg:flex-none"
                 >
                   <LogOut className="mr-2 h-5 w-5" />
                   Salir
@@ -227,16 +214,16 @@ const TeacherDashboard = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-8">
-              <Card className="group border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95 hover:shadow-2xl hover:scale-105 transition-all duration-300 overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+              <Card className="hover:shadow-lg transition-all overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-4">
-                    <div className="p-4 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <Users className="w-7 h-7 text-white" />
+                    <div className="p-4 bg-primary rounded-lg">
+                      <Users className="w-7 h-7 text-primary-foreground" />
                     </div>
                     <div>
-                      <p className="text-3xl font-extrabold text-slate-800">{students.length}</p>
-                      <p className="text-sm font-medium text-slate-600">Total Estudiantes</p>
+                      <p className="text-3xl font-bold">{students.length}</p>
+                      <p className="text-sm text-muted-foreground">Total Estudiantes</p>
                     </div>
                   </div>
                 </CardContent>

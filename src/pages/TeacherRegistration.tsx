@@ -115,15 +115,15 @@ const TeacherRegistration = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-blue-600 rounded flex items-center justify-center text-white font-bold">
-              VS
+            <div className="h-10 w-10 bg-primary rounded flex items-center justify-center text-primary-foreground font-bold">
+              ITAL
             </div>
-            <span className="text-lg font-bold text-gray-900">ViaSafe Educación</span>
+            <span className="text-lg font-bold">ITAL - Administración</span>
           </div>
         </div>
       </header>
@@ -139,12 +139,12 @@ const TeacherRegistration = () => {
             Volver al Panel
           </Button>
 
-          <Card className="border border-gray-200 shadow-sm bg-white">
+          <Card className="shadow-md">
             <CardHeader className="text-center pb-6">
-              <div className="w-16 h-16 mx-auto mb-4 bg-blue-600 rounded-lg flex items-center justify-center">
-                <UserPlus className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-lg flex items-center justify-center">
+                <UserPlus className="w-8 h-8 text-primary-foreground" />
               </div>
-              <CardTitle className="text-2xl text-gray-900">
+              <CardTitle className="text-2xl">
                 Registrar Nuevo Profesor
               </CardTitle>
               <CardDescription>
@@ -228,14 +228,14 @@ const TeacherRegistration = () => {
                   <p className="text-xs text-gray-500">Mínimo 6 caracteres</p>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
                   <div className="flex items-start gap-3">
-                    <GraduationCap className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <GraduationCap className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-semibold text-gray-900 mb-1">
+                      <p className="text-sm font-semibold mb-1">
                         Privilegios de Profesor
                       </p>
-                      <ul className="text-xs text-gray-700 space-y-1">
+                      <ul className="text-xs text-muted-foreground space-y-1">
                         <li>• Ver todos los estudiantes</li>
                         <li>• Acceder al progreso de estudiantes</li>
                         <li>• Gestionar cursos y contenido</li>
@@ -248,7 +248,7 @@ const TeacherRegistration = () => {
               <CardFooter>
                 <Button
                   type="submit"
-                  className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white"
+                  className="w-full h-11"
                   disabled={loading}
                 >
                   {loading ? (

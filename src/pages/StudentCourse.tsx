@@ -139,9 +139,9 @@ const StudentCourse = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
-        <Button variant="ghost" onClick={() => navigate("/courses")} className="mb-4 md:mb-6">
+        <Button variant="outline" onClick={() => navigate("/courses")} className="mb-4 md:mb-6">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Volver a Cursos
         </Button>
@@ -156,7 +156,7 @@ const StudentCourse = () => {
           </div>
           
           {allCompleted && (
-            <div className="mt-4 p-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg border-2 border-primary">
+            <div className="mt-4 p-4 bg-primary/10 rounded-lg border border-primary">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <Award className="h-8 w-8 text-primary" />

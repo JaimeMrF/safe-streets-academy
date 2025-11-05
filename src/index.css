@@ -8,44 +8,43 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Bright, Colorful & Professional Theme - Road Safety */
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    /* ITAL - Verde Institucional Professional Theme */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 13%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 0 0% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 0 0% 13%;
     
-    /* Traffic Signal Colors - Vibrant */
-    --primary: 142 76% 45%;  /* Bright Green - Go */
+    /* ITAL Colors - Verde Institucional */
+    --primary: 142 76% 36%;  /* Verde ITAL institucional */
     --primary-foreground: 0 0% 100%;
-    --secondary: 45 93% 58%;  /* Bright Yellow - Caution */
-    --secondary-foreground: 222 47% 11%;
-    --accent: 217 91% 60%;  /* Bright Blue - Info */
+    --secondary: 0 0% 96%;  /* Gris claro secundario */
+    --secondary-foreground: 0 0% 13%;
+    --accent: 142 60% 45%;  /* Verde acento claro */
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;  /* Red - Stop */
+    --destructive: 0 84% 60%;  /* Rojo para acciones destructivas */
     --destructive-foreground: 0 0% 100%;
     
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 142 76% 45%;
-    --radius: 1rem;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 142 76% 36%;
+    --radius: 0.5rem;
     
-    /* Custom Gradients - Vibrant */
-    --gradient-primary: linear-gradient(135deg, hsl(142 76% 45%), hsl(142 76% 60%));
-    --gradient-danger: linear-gradient(135deg, hsl(0 84% 60%), hsl(0 84% 75%));
-    --gradient-warning: linear-gradient(135deg, hsl(45 93% 58%), hsl(45 93% 70%));
-    --gradient-info: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 75%));
-    --gradient-bg: linear-gradient(180deg, hsl(210 100% 97%), hsl(210 80% 95%));
-    --gradient-fun: linear-gradient(135deg, hsl(142 76% 45%), hsl(217 91% 60%), hsl(45 93% 58%));
+    /* Custom Gradients - Verde ITAL */
+    --gradient-primary: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 45%));
+    --gradient-danger: linear-gradient(135deg, hsl(0 84% 60%), hsl(0 84% 70%));
+    --gradient-warning: linear-gradient(135deg, hsl(45 93% 58%), hsl(45 93% 68%));
+    --gradient-info: linear-gradient(135deg, hsl(142 60% 45%), hsl(142 60% 55%));
+    --gradient-bg: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 98%));
+    --gradient-ital: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 50%));
     
-    /* Shadows - Softer */
-    --shadow-glow-green: 0 4px 20px hsl(142 76% 45% / 0.2);
-    --shadow-glow-yellow: 0 4px 20px hsl(45 93% 58% / 0.2);
-    --shadow-card: 0 2px 15px hsl(222 47% 11% / 0.08);
-    --shadow-hover: 0 4px 25px hsl(222 47% 11% / 0.12);
+    /* Shadows - Professional */
+    --shadow-glow-green: 0 4px 20px hsl(142 76% 36% / 0.15);
+    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.1);
+    --shadow-hover: 0 4px 12px hsl(0 0% 0% / 0.15);
     
     /* Transitions */
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -53,43 +52,43 @@ All colors MUST be HSL.
     --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 142 76% 45%;
+    --sidebar-foreground: 0 0% 13%;
+    --sidebar-primary: 142 76% 36%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 142 76% 45%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 13%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 142 76% 36%;
   }
 
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 16%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 16%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 142 76% 50%;
+    --background: 0 0% 13%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 16%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 16%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 142 76% 45%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 45 93% 65%;
-    --secondary-foreground: 222 47% 11%;
-    --accent: 217 91% 65%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 98%;
+    --accent: 142 60% 50%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --muted: 222 47% 20%;
-    --muted-foreground: 215 20% 65%;
-    --border: 215 28% 25%;
-    --input: 215 28% 25%;
-    --ring: 142 76% 50%;
-    --sidebar-background: 222 47% 16%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 142 76% 50%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 65%;
+    --border: 0 0% 25%;
+    --input: 0 0% 25%;
+    --ring: 142 76% 45%;
+    --sidebar-background: 0 0% 16%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 142 76% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 47% 20%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 28% 25%;
-    --sidebar-ring: 142 76% 50%;
+    --sidebar-accent: 0 0% 20%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 25%;
+    --sidebar-ring: 142 76% 45%;
   }
 }
 

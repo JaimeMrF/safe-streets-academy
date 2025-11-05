@@ -85,21 +85,32 @@ const AdminTeachers = () => {
   };
 
   const handleDeleteTeacher = async (teacherId: string) => {
-    if (!confirm("¿Estás seguro de eliminar este profesor?")) return;
+    if (!confirm("⚠️ ¿Estás seguro de eliminar este profesor?\n\nEsta acción eliminará:\n- El perfil del profesor\n- Su rol de usuario\n\nEsta acción NO se puede deshacer.")) return;
 
     try {
-      const { error } = await supabase
+      // 1. Eliminar rol del usuario
+      const { error: roleError } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", teacherId);
+
+      if (roleError) {
+        console.error("Error eliminando rol:", roleError);
+      }
+
+      // 2. Eliminar perfil del profesor
+      const { error: profileError } = await supabase
         .from("profiles")
         .delete()
         .eq("id", teacherId);
 
-      if (error) throw error;
+      if (profileError) throw profileError;
 
-      toast.success("Profesor eliminado exitosamente");
+      toast.success("✅ Profesor eliminado completamente del sistema");
       loadTeachers();
     } catch (error) {
       console.error("Error deleting teacher:", error);
-      toast.error("Error al eliminar profesor");
+      toast.error("❌ Error al eliminar profesor. Verifica los permisos.");
     }
   };
 

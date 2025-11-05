@@ -54,31 +54,36 @@ const AdminReports = () => {
 
   const loadStats = async () => {
     try {
-      // Contar estudiantes
+      // Contar estudiantes activos
       const { count: studentsCount } = await supabase
         .from("user_roles")
         .select("*", { count: "exact", head: true })
         .eq("role", "student");
 
-      // Contar profesores
+      // Contar profesores activos
       const { count: teachersCount } = await supabase
         .from("user_roles")
         .select("*", { count: "exact", head: true })
         .eq("role", "teacher");
 
-      // Contar cursos
+      // Contar cursos totales
       const { count: coursesCount } = await supabase
         .from("courses")
         .select("*", { count: "exact", head: true });
 
-      // Estudiantes por nivel
+      // Obtener IDs de estudiantes
+      const { data: studentRoles } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "student");
+
+      const studentIds = studentRoles?.map(r => r.user_id) || [];
+
+      // Estudiantes por nivel educativo
       const { data: studentsByLevel } = await supabase
         .from("profiles")
         .select("education_level")
-        .in("id", 
-          (await supabase.from("user_roles").select("user_id").eq("role", "student"))
-            .data?.map(r => r.user_id) || []
-        );
+        .in("id", studentIds);
 
       const levelCounts = {
         preescolar: 0,
@@ -93,12 +98,35 @@ const AdminReports = () => {
         }
       });
 
+      // Calcular progreso promedio de TODOS los estudiantes
+      let totalProgressPercentage = 0;
+      let studentsWithProgress = 0;
+
+      for (const studentId of studentIds) {
+        const { data: progressData } = await supabase
+          .from("student_progress")
+          .select("completed, route_id")
+          .eq("student_id", studentId);
+
+        if (progressData && progressData.length > 0) {
+          const completed = progressData.filter(p => p.completed).length;
+          const total = progressData.length;
+          const percentage = (completed / total) * 100;
+          totalProgressPercentage += percentage;
+          studentsWithProgress++;
+        }
+      }
+
+      const avgProgress = studentsWithProgress > 0 
+        ? Math.round(totalProgressPercentage / studentsWithProgress)
+        : 0;
+
       setStats({
         totalStudents: studentsCount || 0,
         totalTeachers: teachersCount || 0,
         totalCourses: coursesCount || 0,
-        totalProgress: 0, // Implementar cuando tengas tabla de progreso
-        avgProgress: 0,
+        totalProgress: 0,
+        avgProgress: avgProgress,
         studentsByLevel: levelCounts
       });
     } catch (error) {

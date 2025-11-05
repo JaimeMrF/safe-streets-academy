@@ -1,57 +1,68 @@
 // ============================================
-// CONFIGURACIÓN PRINCIPAL DEL SITIO
+// CONFIGURACIÓN PRINCIPAL DEL SITIO - ITAL
 // ============================================
 // CAMBIA ESTOS VALORES PARA CUSTOMIZAR TU SITIO
 
 export const siteConfig = {
   // ============================================
-  // INFORMACIÓN BÁSICA
+  // INFORMACIÓN BÁSICA - ITAL OCAÑA
   // ============================================
-  name: "ViaSafe Educación",
-  shortName: "VS", // Para el logo cuadrado
-  description: "Plataforma educativa integral con contenido interactivo, videos profesionales y recursos descargables adaptados a cada nivel educativo.",
+  name: "ITAL - Educación Vial",
+  shortName: "ITAL", // Para el logo cuadrado
+  fullName: "Instituto Técnico Alfonso López",
+  location: "Ocaña, Norte de Santander, Colombia",
+  description: "Plataforma educativa de seguridad vial del Instituto Técnico Alfonso López. Formación integral con contenido interactivo, videos profesionales y recursos descargables.",
+  
+  // Identidad institucional
+  mission: "Formación integral del ser humano mediante investigación, TIC y educación en valores éticos, morales y ambientales.",
+  vision: "Ser líder en formación integral, técnica, humana y social, con enfoque empresarial e investigativo.",
   
   // ============================================
-  // COLORES PRINCIPALES (formato HSL)
+  // COLORES INSTITUCIONALES (formato HSL)
   // ============================================
-  // Cambia estos valores para cambiar todo el esquema de colores del sitio
+  // Verde institucional del ITAL + blanco
   colors: {
-    primary: "220 90% 56%",      // Azul principal - AQUI CAMBIAS EL COLOR PRINCIPAL
-    primaryHover: "220 85% 48%", // Azul hover - Más oscuro que el principal
-    accent: "280 60% 50%",       // Morado acento
-    secondary: "340 75% 55%",    // Rosa secundario
+    primary: "142 76% 36%",      // Verde ITAL institucional - AQUI CAMBIAS EL COLOR PRINCIPAL
+    primaryHover: "142 76% 28%", // Verde hover - Más oscuro
+    accent: "142 60% 45%",       // Verde acento claro
+    secondary: "0 0% 100%",      // Blanco secundario
     
-    // Colores por nivel educativo
-    preescolar: "#EF4444",      // Rojo
-    primaria: "#3B82F6",        // Azul
-    secundaria: "#10B981",      // Verde
-    bachillerato: "#8B5CF6",    // Morado
+    // Colores por nivel educativo (manteniendo verde institucional)
+    preescolar: "#22C55E",      // Verde claro
+    primaria: "#16A34A",        // Verde medio
+    secundaria: "#15803D",      // Verde oscuro
+    bachillerato: "#166534",    // Verde muy oscuro
   },
   
   // ============================================
-  // LOGOTIPOS Y RECURSOS VISUALES
+  // LOGOTIPOS Y RECURSOS VISUALES - ITAL
   // ============================================
-  // AQUI PONES LA RUTA DE TUS IMAGENES
+  // ⚠️ AQUI PONES LA RUTA DE TUS IMAGENES ⚠️
   logo: {
-    url: "/viasafe-logo.png",           // CAMBIA ESTA RUTA A TU LOGO
-    alt: "ViaSafe Logo"
+    url: "https://ital.edu.co/wp-content/uploads/2021/10/logo-ital-500-365x365.webp", // Logo ITAL
+    alt: "Logo Instituto Técnico Alfonso López"
+  },
+  banner: {
+    url: "https://ital.edu.co/wp-content/uploads/2021/10/bandera-ital.webp", // Bandera ITAL
+    alt: "Bandera ITAL"
   },
   heroImage: {
     url: "/hero-road-safety.jpg",       // CAMBIA ESTA RUTA A TU IMAGEN HERO
-    alt: "Educación Vial"
+    alt: "Educación Vial ITAL"
   },
   
   // ============================================
-  // VIDEOS EDUCATIVOS
+  // VIDEOS EDUCATIVOS - SEGURIDAD VIAL
   // ============================================
-  // AQUI PONES LOS LINKS DE TUS VIDEOS DE YOUTUBE
-  // Formato: https://www.youtube.com/embed/VIDEO_ID
+  // ⚠️⚠️⚠️ AQUI PONES LOS LINKS DE TUS VIDEOS DE YOUTUBE ⚠️⚠️⚠️
+  // Formato correcto: https://www.youtube.com/embed/VIDEO_ID
+  // Ejemplo: https://www.youtube.com/embed/dQw4w9WgXcQ
   videos: [
     {
       title: "Semáforos y Señales Básicas",
       duration: "5:30",
       level: "Preescolar",
-      // ⚠️ AQUI PONES EL LINK DEL VIDEO ⚠️
+      // ⚠️⚠️⚠️ REEMPLAZA "VIDEO_ID_AQUI" CON EL ID REAL DEL VIDEO ⚠️⚠️⚠️
       youtubeEmbedUrl: "https://www.youtube.com/embed/VIDEO_ID_AQUI",
       thumbnail: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=800&q=80",
       description: "Aprende los colores del semáforo de forma divertida"
@@ -60,7 +71,7 @@ export const siteConfig = {
       title: "Cómo Cruzar la Calle Seguro",
       duration: "7:15",
       level: "Primaria",
-      // ⚠️ AQUI PONES EL LINK DEL VIDEO ⚠️
+      // ⚠️⚠️⚠️ REEMPLAZA "VIDEO_ID_AQUI" CON EL ID REAL DEL VIDEO ⚠️⚠️⚠️
       youtubeEmbedUrl: "https://www.youtube.com/embed/VIDEO_ID_AQUI",
       thumbnail: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80",
       description: "Pasos para cruzar de manera segura"
@@ -69,7 +80,7 @@ export const siteConfig = {
       title: "Ciclismo Urbano Seguro",
       duration: "10:45",
       level: "Secundaria",
-      // ⚠️ AQUI PONES EL LINK DEL VIDEO ⚠️
+      // ⚠️⚠️⚠️ REEMPLAZA "VIDEO_ID_AQUI" CON EL ID REAL DEL VIDEO ⚠️⚠️⚠️
       youtubeEmbedUrl: "https://www.youtube.com/embed/VIDEO_ID_AQUI",
       thumbnail: "https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800&q=80",
       description: "Reglas y equipamiento para ciclistas"
@@ -78,7 +89,7 @@ export const siteConfig = {
       title: "Preparación para la Licencia",
       duration: "12:20",
       level: "Bachillerato",
-      // ⚠️ AQUI PONES EL LINK DEL VIDEO ⚠️
+      // ⚠️⚠️⚠️ REEMPLAZA "VIDEO_ID_AQUI" CON EL ID REAL DEL VIDEO ⚠️⚠️⚠️
       youtubeEmbedUrl: "https://www.youtube.com/embed/VIDEO_ID_AQUI",
       thumbnail: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=800&q=80",
       description: "Todo sobre el examen de conducción"
@@ -88,27 +99,28 @@ export const siteConfig = {
   // ============================================
   // RECURSOS DESCARGABLES
   // ============================================
-  // AQUI PONES LOS LINKS DE TUS ARCHIVOS PDF/ZIP
+  // ⚠️⚠️⚠️ AQUI PONES LOS LINKS DE TUS ARCHIVOS PDF/ZIP ⚠️⚠️⚠️
+  // Puedes usar rutas locales (/resources/archivo.pdf) o URLs externas
   resources: [
     {
       title: "Guía de Señales de Tránsito",
       type: "PDF",
       size: "2.5 MB",
-      // ⚠️ AQUI PONES EL LINK DEL ARCHIVO ⚠️
+      // ⚠️⚠️⚠️ REEMPLAZA CON LA RUTA REAL DEL ARCHIVO ⚠️⚠️⚠️
       downloadUrl: "/resources/guia-senales.pdf"
     },
     {
       title: "Manual del Peatón",
       type: "PDF",
       size: "1.8 MB",
-      // ⚠️ AQUI PONES EL LINK DEL ARCHIVO ⚠️
+      // ⚠️⚠️⚠️ REEMPLAZA CON LA RUTA REAL DEL ARCHIVO ⚠️⚠️⚠️
       downloadUrl: "/resources/manual-peaton.pdf"
     },
     {
       title: "Actividades Imprimibles",
       type: "ZIP",
       size: "5.4 MB",
-      // ⚠️ AQUI PONES EL LINK DEL ARCHIVO ⚠️
+      // ⚠️⚠️⚠️ REEMPLAZA CON LA RUTA REAL DEL ARCHIVO ⚠️⚠️⚠️
       downloadUrl: "/resources/actividades.zip"
     }
   ],
@@ -151,18 +163,19 @@ export const siteConfig = {
   },
   
   // ============================================
-  // CONTACTO Y REDES SOCIALES
+  // CONTACTO Y REDES SOCIALES - ITAL
   // ============================================
-  // AQUI PONES TUS REDES SOCIALES Y CONTACTO
+  // ⚠️⚠️⚠️ AQUI PONES LAS REDES SOCIALES Y CONTACTO DEL ITAL ⚠️⚠️⚠️
   contact: {
-    email: "contacto@viasafe.edu",
-    phone: "+34 123 456 789",
-    address: "Calle Principal 123, Ciudad, País",
+    email: "contacto@ital.edu.co",
+    phone: "+57 (5) 569 0210", // Ajustar según datos reales
+    address: "Ocaña, Norte de Santander, Colombia",
+    website: "https://ital.edu.co",
     social: {
-      facebook: "https://facebook.com/viasafe",
-      twitter: "https://twitter.com/viasafe",
-      instagram: "https://instagram.com/viasafe",
-      youtube: "https://youtube.com/viasafe"
+      facebook: "https://facebook.com/italocana", // Ajustar según datos reales
+      twitter: "https://twitter.com/italocana",   // Ajustar según datos reales
+      instagram: "https://instagram.com/italocana", // Ajustar según datos reales
+      youtube: "https://youtube.com/@italocana"   // Ajustar según datos reales
     }
   }
 };

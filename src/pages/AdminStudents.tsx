@@ -86,21 +86,42 @@ const AdminStudents = () => {
   };
 
   const handleDeleteStudent = async (studentId: string) => {
-    if (!confirm("¿Estás seguro de eliminar este estudiante?")) return;
+    if (!confirm("⚠️ ¿Estás seguro de eliminar este estudiante?\n\nEsta acción eliminará:\n- El perfil del estudiante\n- Todo su progreso en cursos\n- Su rol de usuario\n\nEsta acción NO se puede deshacer.")) return;
 
     try {
-      const { error } = await supabase
+      // 1. Eliminar progreso del estudiante
+      const { error: progressError } = await supabase
+        .from("student_progress")
+        .delete()
+        .eq("student_id", studentId);
+
+      if (progressError) {
+        console.error("Error eliminando progreso:", progressError);
+      }
+
+      // 2. Eliminar rol del usuario
+      const { error: roleError } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", studentId);
+
+      if (roleError) {
+        console.error("Error eliminando rol:", roleError);
+      }
+
+      // 3. Eliminar perfil del estudiante
+      const { error: profileError } = await supabase
         .from("profiles")
         .delete()
         .eq("id", studentId);
 
-      if (error) throw error;
+      if (profileError) throw profileError;
 
-      toast.success("Estudiante eliminado exitosamente");
+      toast.success("✅ Estudiante eliminado completamente del sistema");
       loadStudents();
     } catch (error) {
       console.error("Error deleting student:", error);
-      toast.error("Error al eliminar estudiante");
+      toast.error("❌ Error al eliminar estudiante. Verifica los permisos.");
     }
   };
 

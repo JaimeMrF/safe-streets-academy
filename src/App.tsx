@@ -29,7 +29,11 @@ import TrafficSignsIntro from "./pages/games/TrafficSignsIntro";
 import TrafficSignsDesarrollo from "./pages/games/TrafficSignsDesarrollo";
 import TrafficSignsAplicacion from "./pages/games/TrafficSignsAplicacion";
 import TrafficSignsCertificacion from './pages/games/TrafficSignsCertificacion';
-import PedestrianRulesIntro from "./pages/games/PedestrianRulesIntro";
+import VideoLevel2 from "./pages/games/VideoLevel2";
+import VideoLevel1 from "./pages/games/VideoLevel1"
+import VideoLevel3 from "./pages/games/VideoLevel3";
+import PedestrianIntroQuiz from "./pages/games/PedestrianIntroQuiz";
+import PedestrianRulesGame from "./pages/games/PedestrainRulesGame";
 
 const queryClient = new QueryClient();
 
@@ -40,7 +44,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/game/pedestrian-rules-intro/:routeId" element={<PedestrianRulesIntro />} />
+
+          <Route path="/game/introduccionsecundaria/:routeId" element={<PedestrianRulesGame />} />
+          <Route path="/game/quizPreescolar/:routeId" element={<PedestrianIntroQuiz />} />
+          <Route path="/game/video1/:routeId" element={<VideoLevel1 />} />
+          <Route path="/game/video3/:routeId" element={<VideoLevel3 />} />
+          <Route path="/game/video2/:routeId" element={<VideoLevel2 />} />
           <Route path="/game/traffic-signs-certificacion/:routeId" element={<TrafficSignsCertificacion />}/>
           <Route path="/game/traffic-signs-desarrollo/:routeId" element={<TrafficSignsDesarrollo />} />
           <Route path="/game/traffic-signs-aplicacion/:routeId" element={<TrafficSignsAplicacion />} />

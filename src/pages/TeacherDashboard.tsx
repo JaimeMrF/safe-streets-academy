@@ -194,13 +194,7 @@ const TeacherDashboard = () => {
               </div>
 
               <div className="flex gap-3 w-full lg:w-auto">
-                <Button 
-                  onClick={() => navigate("/teacher/courses")}
-                  className="flex-1 lg:flex-none"
-                >
-                  <GraduationCap className="mr-2 h-5 w-5" />
-                  Gestionar Cursos
-                </Button>
+
                 <Button 
                   onClick={handleLogout}
                   variant="outline"

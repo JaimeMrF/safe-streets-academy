@@ -34,6 +34,12 @@ import VideoLevel1 from "./pages/games/VideoLevel1"
 import VideoLevel3 from "./pages/games/VideoLevel3";
 import PedestrianIntroQuiz from "./pages/games/PedestrianIntroQuiz";
 import PedestrianRulesGame from "./pages/games/PedestrainRulesGame";
+import PedestrianRulesDesarrollo from './pages/games/PedestrianRulesDesarrollo';
+import PedestrianRulesAplicacion from './pages/games/PedestrianRulesAplicacion';
+import PedestrianRulesCertificacion from "./pages/games/PedestrianRulesCertificacion";
+import AdvancedSafetySimulator from "./pages/games/AdvancedSafetySimulator";
+import TrafficSafetyDesarrolloSecundaria from "./pages/games/TrafficSafetyDesarrolloSecundaria";
+import AplicacionSecundaria from "./pages/games/AplicacionSecundaria";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +51,12 @@ const App = () => (
       <BrowserRouter>
         <Routes>
 
+          <Route path="/game/aplicacionbachillerato/:routeId" element={<AplicacionSecundaria/>}/>
+          <Route path="/game/desarrollobachillerato/:routeId" element={<TrafficSafetyDesarrolloSecundaria/>}/>
+          <Route path="/game/introduccionbachillerato/:routeId" element={<AdvancedSafetySimulator/>}/>
+          <Route path="/game/pedestrian-rules-certificacion/:routeId" element={<PedestrianRulesCertificacion/>}/>
+          <Route path="/game/pedestrian-rules-aplicacion/:routeId" element={<PedestrianRulesAplicacion/>}/>
+          <Route path="/game/pedestrian-rules-desarrollo/:routeId" element={<PedestrianRulesDesarrollo/>}/>
           <Route path="/game/introduccionsecundaria/:routeId" element={<PedestrianRulesGame />} />
           <Route path="/game/quizPreescolar/:routeId" element={<PedestrianIntroQuiz />} />
           <Route path="/game/video1/:routeId" element={<VideoLevel1 />} />

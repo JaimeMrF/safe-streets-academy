@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { 
   CheckCircle, XCircle, ArrowRight, Play, BookOpen, 
-  Trophy, AlertTriangle, Users, MapPin, Camera, Video
+  Trophy, AlertTriangle, Users, MapPin, Camera, Video, RotateCcw
 } from 'lucide-react';
 
 type Scenario = {
@@ -24,7 +27,7 @@ const SCENARIOS: Scenario[] = [
     title: 'Señalización vial: Semáforo peatonal',
     situation: 'Te encuentras en una intersección con semáforo peatonal. La luz verde para peatones se activa, sin embargo, observas que un vehículo se aproxima a velocidad considerable sin mostrar señales de desaceleración. Según las normas de seguridad vial, ¿cuál es el procedimiento correcto que debes seguir?',
     mediaType: 'video',
-    mediaUrl: '',
+    mediaUrl: 'https://www.youtube.com/watch?v=kgQzB1pJmeM',
     options: [
       {
         text: 'Iniciar el cruce inmediatamente ejerciendo mi derecho de paso como peatón según lo indica el semáforo',
@@ -197,6 +200,11 @@ const SCENARIOS: Scenario[] = [
 ];
 
 const PedestrianRulesGame = () => {
+  const { routeId } = useParams<{ routeId: string }>();
+  const navigate = useNavigate();
+  
+  const [studentId, setStudentId] = useState('');
+  const [courseId, setCourseId] = useState('');
   const [currentScenario, setCurrentScenario] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -204,6 +212,44 @@ const PedestrianRulesGame = () => {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
   const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const initializeGame = async () => {
+      try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+          toast.error('Debe iniciar sesión para continuar');
+          navigate('/auth');
+          return;
+        }
+        setStudentId(user.id);
+
+        if (routeId) {
+          const { data: routeData, error: routeError } = await supabase
+            .from('routes')
+            .select('course_id')
+            .eq('id', routeId)
+            .single();
+
+          if (routeError) {
+            console.error('Error obteniendo información de ruta:', routeError);
+            toast.error('Error al cargar información del curso');
+            return;
+          }
+
+          if (routeData) {
+            setCourseId(routeData.course_id);
+          }
+        }
+      } catch (error) {
+        console.error('Error en inicialización:', error);
+        toast.error('Error al inicializar evaluación');
+        navigate('/courses');
+      }
+    };
+
+    initializeGame();
+  }, [navigate, routeId]);
 
   const scenario = SCENARIOS[currentScenario];
 
@@ -226,6 +272,50 @@ const PedestrianRulesGame = () => {
       setShowFeedback(false);
     } else {
       setGameComplete(true);
+    }
+  };
+
+  const calculateAccuracy = () => {
+    return Math.round((correctAnswers / SCENARIOS.length) * 100);
+  };
+
+  const handleComplete = async () => {
+    const accuracy = calculateAccuracy();
+    const passed = accuracy >= 70;
+
+    if (!passed) {
+      toast.warning('Se requiere mínimo 70% de precisión para aprobar');
+      setTimeout(() => restart(), 1500);
+      return;
+    }
+
+    try {
+      const { error: progressError } = await supabase
+        .from('student_progress')
+        .upsert({
+          student_id: studentId,
+          route_id: routeId,
+          score: score,
+          completed: true,
+          best_accuracy_percentage: accuracy,
+          completion_date: new Date().toISOString()
+        }, {
+          onConflict: 'student_id,route_id'
+        });
+      
+      if (progressError) throw progressError;
+      
+      toast.success('¡Nivel completado exitosamente!');
+      
+      // Redirigir al selector de niveles del curso
+      if (courseId) {
+        navigate(`/student/course/${courseId}`);
+      } else {
+        navigate('/courses');
+      }
+    } catch (error) {
+      console.error('Error al registrar progreso:', error);
+      toast.error('Error al guardar progreso');
     }
   };
 
@@ -330,7 +420,7 @@ const PedestrianRulesGame = () => {
 
   // Pantalla de resultados
   if (gameComplete) {
-    const accuracy = Math.round((correctAnswers / SCENARIOS.length) * 100);
+    const accuracy = calculateAccuracy();
     const passed = accuracy >= 70;
 
     return (
@@ -380,20 +470,51 @@ const PedestrianRulesGame = () => {
                 </div>
               </div>
 
+              {passed && (
+                <div className="bg-green-50 border-2 border-green-200 rounded-lg p-5 mb-6">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-bold text-green-800 mb-1">Nivel Aprobado</h4>
+                      <p className="text-sm text-gray-700">
+                        Tu progreso ha sido registrado. Puedes continuar con los siguientes niveles del curso.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {!passed && (
+                <div className="bg-amber-50 border-2 border-amber-200 rounded-lg p-5 mb-6">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-bold text-amber-800 mb-1">Refuerzo Recomendado</h4>
+                      <p className="text-sm text-gray-700">
+                        Se requiere un mínimo de 70% de precisión. Revisa los conceptos y realiza nuevamente la evaluación.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="flex gap-3">
                 <button
                   onClick={restart}
-                  className="flex-1 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-900 font-medium rounded-lg transition-colors"
+                  className="flex-1 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-900 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
+                  <RotateCcw className="w-5 h-5" />
                   Reintentar nivel
                 </button>
-                <button
-                  onClick={() => alert('Continuar al siguiente nivel')}
-                  className="flex-1 px-6 py-3 bg-slate-800 hover:bg-slate-900 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                >
-                  Siguiente nivel
-                  <ArrowRight className="w-5 h-5" />
-                </button>
+                {passed && (
+                  <button
+                    onClick={handleComplete}
+                    className="flex-1 px-6 py-3 bg-slate-800 hover:bg-slate-900 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    Finalizar y Continuar
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                )}
               </div>
             </div>
           </div>

@@ -62,8 +62,8 @@ export const siteConfig = {
       title: "Semáforos y Señales Básicas",
       duration: "5:30",
       level: "Preescolar",
-      // ⚠️⚠️⚠️ REEMPLAZA "VIDEO_ID_AQUI" CON EL ID REAL DEL VIDEO ⚠️⚠️⚠️
-      youtubeEmbedUrl: "https://www.youtube.com/embed/VIDEO_ID_AQUI",
+   
+      youtubeEmbedUrl: "https://www.youtube.com/embed/rnb0fkpeOao?si=g0LvJyIQsWyPiOaM",
       thumbnail: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=800&q=80",
       description: "Aprende los colores del semáforo de forma divertida"
     },
@@ -72,7 +72,7 @@ export const siteConfig = {
       duration: "7:15",
       level: "Primaria",
       // ⚠️⚠️⚠️ REEMPLAZA "VIDEO_ID_AQUI" CON EL ID REAL DEL VIDEO ⚠️⚠️⚠️
-      youtubeEmbedUrl: "https://www.youtube.com/embed/VIDEO_ID_AQUI",
+      youtubeEmbedUrl: "https://www.youtube.com/embed/7_UJryJ6UjI?si=0B-F9viFqKCYR2hY",
       thumbnail: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80",
       description: "Pasos para cruzar de manera segura"
     },
@@ -81,7 +81,7 @@ export const siteConfig = {
       duration: "10:45",
       level: "Secundaria",
       // ⚠️⚠️⚠️ REEMPLAZA "VIDEO_ID_AQUI" CON EL ID REAL DEL VIDEO ⚠️⚠️⚠️
-      youtubeEmbedUrl: "https://www.youtube.com/embed/VIDEO_ID_AQUI",
+      youtubeEmbedUrl: "https://www.youtube.com/embed/xZCzsf5X_Wo?si=UqEiIddKLUDLcjfE",
       thumbnail: "https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800&q=80",
       description: "Reglas y equipamiento para ciclistas"
     },
@@ -90,7 +90,7 @@ export const siteConfig = {
       duration: "12:20",
       level: "Bachillerato",
       // ⚠️⚠️⚠️ REEMPLAZA "VIDEO_ID_AQUI" CON EL ID REAL DEL VIDEO ⚠️⚠️⚠️
-      youtubeEmbedUrl: "https://www.youtube.com/embed/VIDEO_ID_AQUI",
+      youtubeEmbedUrl: "https://www.youtube.com/embed/YBftXKmJQMQ?si=ROm6TOGqTgzLtdOW",
       thumbnail: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=800&q=80",
       description: "Todo sobre el examen de conducción"
     }
@@ -101,29 +101,7 @@ export const siteConfig = {
   // ============================================
   // ⚠️⚠️⚠️ AQUI PONES LOS LINKS DE TUS ARCHIVOS PDF/ZIP ⚠️⚠️⚠️
   // Puedes usar rutas locales (/resources/archivo.pdf) o URLs externas
-  resources: [
-    {
-      title: "Guía de Señales de Tránsito",
-      type: "PDF",
-      size: "2.5 MB",
-      // ⚠️⚠️⚠️ REEMPLAZA CON LA RUTA REAL DEL ARCHIVO ⚠️⚠️⚠️
-      downloadUrl: "/resources/guia-senales.pdf"
-    },
-    {
-      title: "Manual del Peatón",
-      type: "PDF",
-      size: "1.8 MB",
-      // ⚠️⚠️⚠️ REEMPLAZA CON LA RUTA REAL DEL ARCHIVO ⚠️⚠️⚠️
-      downloadUrl: "/resources/manual-peaton.pdf"
-    },
-    {
-      title: "Actividades Imprimibles",
-      type: "ZIP",
-      size: "5.4 MB",
-      // ⚠️⚠️⚠️ REEMPLAZA CON LA RUTA REAL DEL ARCHIVO ⚠️⚠️⚠️
-      downloadUrl: "/resources/actividades.zip"
-    }
-  ],
+
   
   // ============================================
   // NIVELES EDUCATIVOS
@@ -161,21 +139,4 @@ export const siteConfig = {
       ]
     }
   },
-  
-  // ============================================
-  // CONTACTO Y REDES SOCIALES - ITAL
-  // ============================================
-  // ⚠️⚠️⚠️ AQUI PONES LAS REDES SOCIALES Y CONTACTO DEL ITAL ⚠️⚠️⚠️
-  contact: {
-    email: "contacto@ital.edu.co",
-    phone: "+57 (5) 569 0210", // Ajustar según datos reales
-    address: "Ocaña, Norte de Santander, Colombia",
-    website: "https://ital.edu.co",
-    social: {
-      facebook: "https://facebook.com/italocana", // Ajustar según datos reales
-      twitter: "https://twitter.com/italocana",   // Ajustar según datos reales
-      instagram: "https://instagram.com/italocana", // Ajustar según datos reales
-      youtube: "https://youtube.com/@italocana"   // Ajustar según datos reales
-    }
-  }
 };

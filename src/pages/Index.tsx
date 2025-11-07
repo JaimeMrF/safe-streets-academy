@@ -41,6 +41,15 @@ const Index = () => {
       <section className="bg-gradient-to-b from-gray-50 to-white py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
+            {/* Logo ITAL */}
+            <div className="flex justify-center mb-8">
+              <img 
+                src={siteConfig.logo.url} 
+                alt={siteConfig.logo.alt}
+                className="h-32 w-auto object-contain animate-fade-in"
+              />
+            </div>
+            
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               {name}
             </h1>

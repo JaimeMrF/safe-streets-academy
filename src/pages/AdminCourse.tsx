@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Search, BookOpen, Plus, Edit, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { siteConfig } from "@/config/site.config";
 
 interface Course {
   id: string;
@@ -120,6 +121,15 @@ const AdminCourses = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-pink-50 to-rose-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Logo institucional */}
+        <div className="flex justify-center mb-6 animate-fade-in">
+          <img 
+            src={siteConfig.logo.url}
+            alt={siteConfig.logo.alt}
+            className="h-20 w-auto object-contain"
+          />
+        </div>
+        
         <Button
           variant="ghost"
           onClick={() => navigate("/admin/dashboard")}

@@ -7,6 +7,7 @@ import { LogOut, Users, GraduationCap, TrendingUp, Award, Search, Filter } from 
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { siteConfig } from "@/config/site.config";
 
 interface Student {
   id: string;
@@ -177,6 +178,15 @@ const TeacherDashboard = () => {
 
       <div className="relative p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
+          {/* Logo institucional */}
+          <div className="flex justify-center mb-8 animate-fade-in">
+            <img 
+              src={siteConfig.logo.url}
+              alt={siteConfig.logo.alt}
+              className="h-20 w-auto object-contain"
+            />
+          </div>
+          
           {/* Header */}
           <div className="mb-8 md:mb-12">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">

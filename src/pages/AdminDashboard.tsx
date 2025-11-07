@@ -14,6 +14,7 @@ import {
   Settings
 } from "lucide-react";
 import { toast } from "sonner";
+import { siteConfig } from "@/config/site.config";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -103,15 +104,24 @@ const AdminDashboard = () => {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">
-                  Panel de Administración
-                </h1>
-                <p className="text-sm text-gray-600">ViaSafe Educación</p>
+            <div className="flex items-center gap-4">
+              {/* Logo ITAL */}
+              <img 
+                src={siteConfig.logo.url}
+                alt={siteConfig.logo.alt}
+                className="h-12 w-auto object-contain"
+              />
+              <div className="w-px h-10 bg-gray-300" />
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">
+                    Panel de Administración
+                  </h1>
+                  <p className="text-sm text-gray-600">{siteConfig.shortName}</p>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-3">

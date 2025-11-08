@@ -224,10 +224,11 @@ INSERT INTO public.routes (id, course_id, name, description, level_order, game_t
 ('33333333-0000-0000-0000-000000000013', '30000000-0000-0000-0000-000000000002', 'Evaluación Ciclismo', 'Demuestra tu conocimiento', 3, 'quiz', NULL, '{"questions": 12, "timePerQuestion": 25}', false)
 ON CONFLICT (id) DO NOTHING;
 
--- Curso: Primeros Auxilios Viales (Secundaria)
+-- Curso: Primeros Auxilios Viales (Secundaria)el) VALUES
 INSERT INTO public.routes (id, course_id, name, description, level_order, game_type, video_url, game_config, is_certification_level) VALUES
-('33333333-0000-0000-0000-000000000021', '30000000-0000-0000-0000-000000000003', 'Primeros Auxilios Básicos', 'Conceptos fundamentales', 1, 'video2', 'https://www.youtube.com/embed/7_UJryJ6UjI', NULL, false),
-('33333333-0000-0000-0000-000000000022', '30000000-0000-0000-0000-000000000003', 'Procedimientos de Emergencia', 'Qué hacer en emergencias', 2, 'quiz', NULL, '{"questions': 10, "interactive": true}', false),
+('33333333-0000-0000-0000-000000000021', '30000000-0000-0000-0000-000000000003', 'Primeros Auxilios Básicos', 'Conceptos fundamen
+INSERT INTO public.routes (id, course_id, name, description, level_order, game_type, video_url, game_config, is_certification_levtales', 1, 'video2', 'https://www.youtube.com/embed/7_UJryJ6UjI', NULL, false),
+('33333333-0000-0000-0000-000000000022', '30000000-0000-0000-0000-000000000003', 'Procedimientos de Emergencia', 'Qué hacer en emergencias', 2, 'quiz', NULL, '{"questions": 10, "interactive": true}', false),
 ('33333333-0000-0000-0000-000000000023', '30000000-0000-0000-0000-000000000003', 'Simulador 3D', 'Practica en situaciones reales', 3, '3d-model', 'https://sketchfab.com/models/ejemplo', '{"interactive": true}', false)
 ON CONFLICT (id) DO NOTHING;
 

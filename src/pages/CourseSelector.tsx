@@ -43,7 +43,7 @@ const CourseSelector = () => {
 
       const { data: userRole, error: roleError } = await supabase
         .from("user_roles")
-        .select("role")
+        .select("user_role")
         .eq("user_id", user.id)
         .single();
 
@@ -54,19 +54,19 @@ const CourseSelector = () => {
         return;
       }
 
-      if (userRole?.role === "teacher") {
+      if (userRole?.user_role === "teacher") {
         toast.info("Redirigiendo al panel de profesor");
         navigate("/teacher/dashboard");
         return;
       }
 
-      if (userRole?.role === "admin") {
+      if (userRole?.user_role === "admin") {
         toast.info("Redirigiendo al panel de administrador");
         navigate("/admin/dashboard");
         return;
       }
 
-      if (userRole?.role === "student") {
+      if (userRole?.user_role === "student") {
         const { data: profile } = await supabase
           .from("profiles")
           .select("*")

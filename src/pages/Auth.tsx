@@ -34,7 +34,7 @@ const Auth = () => {
       if (session?.user) {
         const { data: userRole, error } = await supabase
           .from("user_roles")
-          .select("role")
+          .select("user_role")
           .eq("user_id", session.user.id)
           .limit(1)
           .maybeSingle();
@@ -44,11 +44,11 @@ const Auth = () => {
           return;
         }
 
-        if (userRole?.role === "admin") {
+        if (userRole?.user_role === "admin") {
           navigate("/admin/dashboard", { replace: true });
-        } else if (userRole?.role === "teacher") {
+        } else if (userRole?.user_role === "teacher") {
           navigate("/teacher/dashboard", { replace: true });
-        } else if (userRole?.role === "student") {
+        } else if (userRole?.user_role === "student") {
           navigate("/courses", { replace: true });
         }
       }
@@ -76,7 +76,7 @@ const Auth = () => {
       if (data.user) {
         const { data: userRole, error: roleError } = await supabase
           .from("user_roles")
-          .select("role")
+          .select("user_role")
           .eq("user_id", data.user.id)
           .limit(1)
           .maybeSingle();
@@ -88,10 +88,10 @@ const Auth = () => {
           return;
         }
 
-        if (userRole?.role === "admin") {
+        if (userRole?.user_role === "admin") {
           toast.success("Bienvenido Administrador");
           navigate("/admin/dashboard", { replace: true });
-        } else if (userRole?.role === "teacher") {
+        } else if (userRole?.user_role === "teacher") {
           toast.success("Bienvenido Profesor");
           navigate("/teacher/dashboard", { replace: true });
         } else {
@@ -154,7 +154,7 @@ const Auth = () => {
         .from("user_roles")
         .upsert({
           user_id: authData.user.id,
-          role: "student",
+          user_role: "student",
         }, {
           onConflict: "user_id"
         });

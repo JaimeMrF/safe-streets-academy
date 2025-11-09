@@ -257,3 +257,43 @@ INSERT INTO public.routes (id, course_id, name, description, level_order, game_t
 ('44444444-0000-0000-0000-000000000022', '40000000-0000-0000-0000-000000000003', 'Casos Prácticos', 'Aplica la legislación', 2, 'aplicacionbachillerato', NULL, '{"cases": 15, "complexity": "high"}', false),
 ('44444444-0000-0000-0000-000000000023', '40000000-0000-0000-0000-000000000003', 'Examen de Certificación', 'Certifica tu conocimiento', 3, 'quiz', NULL, '{"questions": 25, "passingScore": 85}', true)
 ON CONFLICT (id) DO NOTHING;
+
+-- ============================================
+-- VIDEOS EDUCATIVOS
+-- ============================================
+
+-- PREESCOLAR
+INSERT INTO public.educational_videos (id, title, description, video_url, thumbnail_url, duration_minutes, education_level, category, is_featured) VALUES
+('50000000-0000-0000-0000-000000000001', 'Semáforos y Colores', 'Aprende qué significan los colores del semáforo', 'https://www.youtube.com/embed/rnb0fkpeOao', 'https://img.youtube.com/vi/rnb0fkpeOao/maxresdefault.jpg', 5, 'preescolar', 'Señales', true),
+('50000000-0000-0000-0000-000000000002', 'Cruzar la Calle Seguro', 'Mira, escucha y cruza con cuidado', 'https://www.youtube.com/embed/7_UJryJ6UjI', 'https://img.youtube.com/vi/7_UJryJ6UjI/maxresdefault.jpg', 4, 'preescolar', 'Peatones', true),
+('50000000-0000-0000-0000-000000000003', 'Las Señales de Tránsito', 'Conoce las señales básicas', 'https://www.youtube.com/embed/rnb0fkpeOao', 'https://img.youtube.com/vi/rnb0fkpeOao/maxresdefault.jpg', 6, 'preescolar', 'Señales', false),
+('50000000-0000-0000-0000-000000000004', 'El Policía de Tránsito', 'Aprende quién cuida las calles', 'https://www.youtube.com/embed/7_UJryJ6UjI', 'https://img.youtube.com/vi/7_UJryJ6UjI/maxresdefault.jpg', 3, 'preescolar', 'Autoridades', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- PRIMARIA
+INSERT INTO public.educational_videos (id, title, description, video_url, thumbnail_url, duration_minutes, education_level, category, is_featured) VALUES
+('50000000-0000-0000-0000-000000000011', 'Señales Preventivas', 'Identifica señales que te advierten peligros', 'https://www.youtube.com/embed/rnb0fkpeOao', 'https://img.youtube.com/vi/rnb0fkpeOao/maxresdefault.jpg', 8, 'primaria', 'Señales', true),
+('50000000-0000-0000-0000-000000000012', 'Seguridad en Zonas Escolares', 'Cómo comportarte cerca de tu escuela', 'https://www.youtube.com/embed/7_UJryJ6UjI', 'https://img.youtube.com/vi/7_UJryJ6UjI/maxresdefault.jpg', 7, 'primaria', 'Zonas Escolares', true),
+('50000000-0000-0000-0000-000000000013', 'Uso del Cinturón de Seguridad', 'Por qué es importante usar el cinturón', 'https://www.youtube.com/embed/xZCzsf5X_Wo', 'https://img.youtube.com/vi/xZCzsf5X_Wo/maxresdefault.jpg', 5, 'primaria', 'Seguridad', false),
+('50000000-0000-0000-0000-000000000014', 'Peatones Responsables', 'Reglas para caminar por la calle', 'https://www.youtube.com/embed/7_UJryJ6UjI', 'https://img.youtube.com/vi/7_UJryJ6UjI/maxresdefault.jpg', 6, 'primaria', 'Peatones', false),
+('50000000-0000-0000-0000-000000000015', 'Señales Reglamentarias', 'Señales que debes obedecer siempre', 'https://www.youtube.com/embed/rnb0fkpeOao', 'https://img.youtube.com/vi/rnb0fkpeOao/maxresdefault.jpg', 9, 'primaria', 'Señales', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- SECUNDARIA
+INSERT INTO public.educational_videos (id, title, description, video_url, thumbnail_url, duration_minutes, education_level, category, is_featured) VALUES
+('50000000-0000-0000-0000-000000000021', 'Seguridad en Bicicleta', 'Cómo circular seguro en bicicleta', 'https://www.youtube.com/embed/xZCzsf5X_Wo', 'https://img.youtube.com/vi/xZCzsf5X_Wo/maxresdefault.jpg', 10, 'secundaria', 'Ciclismo', true),
+('50000000-0000-0000-0000-000000000022', 'Educación Vial Integral', 'Conceptos avanzados de educación vial', 'https://www.youtube.com/embed/7_UJryJ6UjI', 'https://img.youtube.com/vi/7_UJryJ6UjI/maxresdefault.jpg', 12, 'secundaria', 'Educación Vial', true),
+('50000000-0000-0000-0000-000000000023', 'Primeros Auxilios Viales', 'Qué hacer en caso de accidente', 'https://www.youtube.com/embed/7_UJryJ6UjI', 'https://img.youtube.com/vi/7_UJryJ6UjI/maxresdefault.jpg', 15, 'secundaria', 'Primeros Auxilios', false),
+('50000000-0000-0000-0000-000000000024', 'Responsabilidad del Ciclista', 'Normas y señales para ciclistas', 'https://www.youtube.com/embed/xZCzsf5X_Wo', 'https://img.youtube.com/vi/xZCzsf5X_Wo/maxresdefault.jpg', 8, 'secundaria', 'Ciclismo', false),
+('50000000-0000-0000-0000-000000000025', 'Convivencia Vial', 'Respeto entre conductores, ciclistas y peatones', 'https://www.youtube.com/embed/7_UJryJ6UjI', 'https://img.youtube.com/vi/7_UJryJ6UjI/maxresdefault.jpg', 11, 'secundaria', 'Educación Vial', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- BACHILLERATO
+INSERT INTO public.educational_videos (id, title, description, video_url, thumbnail_url, duration_minutes, education_level, category, is_featured) VALUES
+('50000000-0000-0000-0000-000000000031', 'Preparación para Licencia de Conducir', 'Todo lo que necesitas saber para tu examen', 'https://www.youtube.com/embed/YBftXKmJQMQ', 'https://img.youtube.com/vi/YBftXKmJQMQ/maxresdefault.jpg', 20, 'bachillerato', 'Licencia', true),
+('50000000-0000-0000-0000-000000000032', 'Conducción Defensiva', 'Técnicas para prevenir accidentes', 'https://www.youtube.com/embed/YBftXKmJQMQ', 'https://img.youtube.com/vi/YBftXKmJQMQ/maxresdefault.jpg', 18, 'bachillerato', 'Conducción', true),
+('50000000-0000-0000-0000-000000000033', 'Mecánica Básica del Automóvil', 'Conoce las partes básicas de un auto', 'https://www.youtube.com/embed/xZCzsf5X_Wo', 'https://img.youtube.com/vi/xZCzsf5X_Wo/maxresdefault.jpg', 25, 'bachillerato', 'Mecánica', false),
+('50000000-0000-0000-0000-000000000034', 'Legislación de Tránsito', 'Leyes y reglamentos que debes conocer', 'https://www.youtube.com/embed/rnb0fkpeOao', 'https://img.youtube.com/vi/rnb0fkpeOao/maxresdefault.jpg', 22, 'bachillerato', 'Legislación', false),
+('50000000-0000-0000-0000-000000000035', 'Manejo en Condiciones Adversas', 'Cómo conducir bajo lluvia, niebla y noche', 'https://www.youtube.com/embed/YBftXKmJQMQ', 'https://img.youtube.com/vi/YBftXKmJQMQ/maxresdefault.jpg', 16, 'bachillerato', 'Conducción', false),
+('50000000-0000-0000-0000-000000000036', 'Seguro Vehicular', 'Importancia y tipos de seguros', 'https://www.youtube.com/embed/7_UJryJ6UjI', 'https://img.youtube.com/vi/7_UJryJ6UjI/maxresdefault.jpg', 10, 'bachillerato', 'Seguros', false)
+ON CONFLICT (id) DO NOTHING;

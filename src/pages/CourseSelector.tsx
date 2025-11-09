@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, BookOpen, Trophy, Clock, ArrowRight, User } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LogOut, BookOpen, Trophy, Clock, ArrowRight, User, Play, Video } from "lucide-react";
 import { toast } from "sonner";
 
 interface Course {
@@ -22,9 +24,23 @@ interface CourseProgress {
   percentage: number;
 }
 
+interface EducationalVideo {
+  id: string;
+  title: string;
+  description: string;
+  video_url: string;
+  thumbnail_url: string | null;
+  duration_minutes: number | null;
+  education_level: string;
+  category: string;
+  view_count: number;
+  is_featured: boolean;
+}
+
 const CourseSelector = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState<Course[]>([]);
+  const [videos, setVideos] = useState<EducationalVideo[]>([]);
   const [courseProgress, setCourseProgress] = useState<Record<string, CourseProgress>>({});
   const [userLevel, setUserLevel] = useState("");
   const [userName, setUserName] = useState("");
@@ -97,6 +113,20 @@ const CourseSelector = () => {
           } else {
             console.log("No se encontraron cursos");
             setCourses([]);
+          }
+
+          // Cargar videos educativos
+          const { data: videosData, error: videosError } = await supabase
+            .from("educational_videos")
+            .select("*")
+            .eq("education_level", profile.education_level)
+            .order("is_featured", { ascending: false })
+            .order("created_at", { ascending: false });
+
+          if (videosError) {
+            console.error("Error al cargar videos:", videosError);
+          } else if (videosData) {
+            setVideos(videosData);
           }
         }
       } else {
@@ -312,8 +342,22 @@ const CourseSelector = () => {
           </Card>
         </div>
 
-        {/* Courses Section */}
-        {courses.length > 0 ? (
+        {/* Tabs for Courses and Videos */}
+        <Tabs defaultValue="courses" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
+            <TabsTrigger value="courses" className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4" />
+              Cursos ({courses.length})
+            </TabsTrigger>
+            <TabsTrigger value="videos" className="flex items-center gap-2">
+              <Video className="w-4 h-4" />
+              Videos ({videos.length})
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Courses Tab */}
+          <TabsContent value="courses">
+            {courses.length > 0 ? (
           <>
             <div className="mb-6">
               <h2 className="text-2xl font-bold mb-2">Mis Cursos</h2>
@@ -412,6 +456,89 @@ const CourseSelector = () => {
               </CardContent>
             </Card>
           )}
+          </TabsContent>
+
+          {/* Videos Tab */}
+          <TabsContent value="videos">
+            {videos.length > 0 ? (
+              <>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold mb-2">Videos Educativos</h2>
+                  <p className="text-muted-foreground">{videos.length} video(s) disponible(s)</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {videos.map((video) => (
+                    <Card 
+                      key={video.id}
+                      className="hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
+                      onClick={() => window.open(video.video_url, '_blank')}
+                    >
+                      <div className="relative h-48 overflow-hidden bg-secondary">
+                        {video.thumbnail_url ? (
+                          <img 
+                            src={video.thumbnail_url} 
+                            alt={video.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary">
+                            <Video className="w-16 h-16 text-primary" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                            <Play className="w-8 h-8 ml-1 text-primary" />
+                          </div>
+                        </div>
+                        {video.duration_minutes && (
+                          <Badge className="absolute top-3 right-3 bg-black/70 text-white">
+                            {video.duration_minutes} min
+                          </Badge>
+                        )}
+                        {video.is_featured && (
+                          <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                            Destacado
+                          </Badge>
+                        )}
+                      </div>
+                      <CardHeader>
+                        <div className="flex items-center justify-between mb-2">
+                          <Badge variant="outline">
+                            {video.category}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">
+                            {video.view_count} vistas
+                          </span>
+                        </div>
+                        <CardTitle className="text-lg line-clamp-2">
+                          {video.title}
+                        </CardTitle>
+                        <CardDescription className="line-clamp-2">
+                          {video.description}
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <Card className="border-2 border-dashed">
+                <CardContent className="pt-12 pb-12 text-center">
+                  <div className="w-20 h-20 bg-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Video className="w-10 h-10 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">
+                    No hay videos disponibles
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Por el momento no hay videos para tu nivel educativo.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

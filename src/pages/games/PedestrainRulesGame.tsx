@@ -27,7 +27,7 @@ const SCENARIOS: Scenario[] = [
     title: 'Señalización vial: Semáforo peatonal',
     situation: 'Te encuentras en una intersección con semáforo peatonal. La luz verde para peatones se activa, sin embargo, observas que un vehículo se aproxima a velocidad considerable sin mostrar señales de desaceleración. Según las normas de seguridad vial, ¿cuál es el procedimiento correcto que debes seguir?',
     mediaType: 'video',
-    mediaUrl: 'https://www.youtube.com/watch?v=kgQzB1pJmeM',
+    mediaUrl: 'https://freesvg.org/img/1551866263.png',
     options: [
       {
         text: 'Iniciar el cruce inmediatamente ejerciendo mi derecho de paso como peatón según lo indica el semáforo',
@@ -549,45 +549,8 @@ const PedestrianRulesGame = () => {
 
         {/* Contenido principal */}
         <div className="grid lg:grid-cols-2 gap-6">
-          {/* Panel izquierdo: Media */}
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-            <div className="bg-slate-100 border-b border-slate-200 p-3">
-              <div className="flex items-center gap-2 text-slate-700">
-                {scenario.mediaType === 'video' && <Video className="w-4 h-4" />}
-                {scenario.mediaType === 'image' && <Camera className="w-4 h-4" />}
-                {scenario.mediaType === '3d' && <div className="w-4 h-4 text-xs font-bold">3D</div>}
-                <span className="text-sm font-medium">
-                  {scenario.mediaType === 'video' ? 'Video' : scenario.mediaType === 'image' ? 'Imagen' : 'Modelo 3D'}
-                </span>
-              </div>
-            </div>
-            
-            <div className="aspect-video bg-slate-900 flex items-center justify-center p-8">
-              {scenario.mediaType === 'video' && (
-                <div className="text-center text-white">
-                  <Video className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                  <p className="text-sm opacity-75">Espacio para video</p>
-                  <p className="text-xs opacity-50 mt-2">{scenario.mediaUrl}</p>
-                </div>
-              )}
-              {scenario.mediaType === 'image' && (
-                <div className="text-center text-white">
-                  <Camera className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                  <p className="text-sm opacity-75">Espacio para imagen</p>
-                  <p className="text-xs opacity-50 mt-2">{scenario.mediaUrl}</p>
-                </div>
-              )}
-              {scenario.mediaType === '3d' && (
-                <div className="text-center text-white">
-                  <div className="w-16 h-16 mx-auto mb-4 border-2 border-white/50 rounded-lg flex items-center justify-center">
-                    <span className="text-2xl font-bold">3D</span>
-                  </div>
-                  <p className="text-sm opacity-75">Espacio para modelo 3D</p>
-                  <p className="text-xs opacity-50 mt-2">{scenario.mediaUrl}</p>
-                </div>
-              )}
-            </div>
-          </div>
+         
+  
 
           {/* Panel derecho: Situación y opciones */}
           <div className="space-y-4">
@@ -667,7 +630,7 @@ const PedestrianRulesGame = () => {
           </div>
         </div>
       </div>
-    </div>
+   </div>
   );
 };
 

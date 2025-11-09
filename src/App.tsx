@@ -40,6 +40,9 @@ import PedestrianRulesCertificacion from "./pages/games/PedestrianRulesCertifica
 import AdvancedSafetySimulator from "./pages/games/AdvancedSafetySimulator";
 import TrafficSafetyDesarrolloSecundaria from "./pages/games/TrafficSafetyDesarrolloSecundaria";
 import AplicacionSecundaria from "./pages/games/AplicacionSecundaria";
+import Preescolarcalle from "./pages/games/preescolarcalle"
+import Aplicacionpreescolar from "./pages/games/aplicacionpreescolar";
+import Modelos3D from "./pages/games/modelos3d";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +53,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/game/preescolarcalle/:routeId" element={<Preescolarcalle/>}/>
+          <Route path="/game/preescolaraplicacion/:routeId" element={<Aplicacionpreescolar/>}/>
+          <Route path="/game/modelos3D/:routeId" element={<Modelos3D/>}/>
 
           <Route path="/game/aplicacionbachillerato/:routeId" element={<AplicacionSecundaria/>}/>
           <Route path="/game/desarrollobachillerato/:routeId" element={<TrafficSafetyDesarrolloSecundaria/>}/>

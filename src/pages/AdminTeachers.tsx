@@ -40,7 +40,7 @@ const AdminTeachers = () => {
 
     const { data: userRole } = await supabase
       .from("user_roles")
-      .select("role")
+      .select("user_role")
       .eq("user_id", user.id)
       .limit(1)
       .maybeSingle();

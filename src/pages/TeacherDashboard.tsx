@@ -63,7 +63,7 @@ const TeacherDashboard = () => {
       const { data: studentRoles, error: rolesError } = await supabase
         .from("user_roles")
         .select("user_id")
-        .eq("role", "student");
+        .eq("user_role", "student");
 
       if (rolesError) {
         console.error("Error al obtener roles:", rolesError);

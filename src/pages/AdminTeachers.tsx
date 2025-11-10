@@ -57,7 +57,7 @@ const AdminTeachers = () => {
       const { data: teacherRoles } = await supabase
         .from("user_roles")
         .select("user_id")
-        .eq("role", "teacher");
+        .eq("user_role", "teacher");
 
       if (!teacherRoles || teacherRoles.length === 0) {
         setTeachers([]);

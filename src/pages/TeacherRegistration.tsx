@@ -35,7 +35,7 @@ const TeacherRegistration = () => {
         .limit(1)
         .maybeSingle();
 
-      if (userRole?.role !== "admin") {
+      if (userRole?.user_role !== "admin") {
         toast.error("Solo los administradores pueden crear profesores");
         navigate("/courses");
         return;

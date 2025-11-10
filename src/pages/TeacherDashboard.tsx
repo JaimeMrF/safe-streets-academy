@@ -42,7 +42,7 @@ const TeacherDashboard = () => {
         .eq("user_id", user.id)
         .single();
 
-      if (userRole?.role !== "teacher") {
+      if (userRole?.user_role !== "teacher") {
         toast.error("No tienes permisos de profesor");
         navigate("/courses");
         return;

@@ -48,7 +48,7 @@ const AdminCourses = () => {
       .limit(1)
       .maybeSingle();
 
-    if (userRole?.role !== "admin") {
+    if (userRole?.user_role !== "admin") {
       toast.error("No tienes permisos de administrador");
       navigate("/courses");
       return;

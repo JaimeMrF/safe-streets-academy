@@ -38,7 +38,7 @@ const TeacherDashboard = () => {
       // Verificar que sea profesor
       const { data: userRole } = await supabase
         .from("user_roles")
-        .select("role")
+        .select("user_role")
         .eq("user_id", user.id)
         .single();
 

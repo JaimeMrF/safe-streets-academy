@@ -83,7 +83,7 @@ const TeacherRegistration = () => {
           .from("user_roles")
           .upsert({
             user_id: authData.user.id,
-            role: "teacher",
+            user_role: "teacher",
           }, {
             onConflict: "user_id"
           });

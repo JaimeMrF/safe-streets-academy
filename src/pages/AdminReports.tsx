@@ -58,13 +58,13 @@ const AdminReports = () => {
       const { count: studentsCount } = await supabase
         .from("user_roles")
         .select("*", { count: "exact", head: true })
-        .eq("role", "student");
+        .eq("user_role", "student");
 
       // Contar profesores activos
       const { count: teachersCount } = await supabase
         .from("user_roles")
         .select("*", { count: "exact", head: true })
-        .eq("role", "teacher");
+        .eq("user_role", "teacher");
 
       // Contar cursos totales
       const { count: coursesCount } = await supabase
@@ -75,7 +75,7 @@ const AdminReports = () => {
       const { data: studentRoles } = await supabase
         .from("user_roles")
         .select("user_id")
-        .eq("role", "student");
+        .eq("user_role", "student");
 
       const studentIds = studentRoles?.map(r => r.user_id) || [];
 

@@ -9,9 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { School, MapPin, CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy, Target, TrendingUp, Award, Clock, Info } from 'lucide-react';
 
 // Importa las imágenes que necesites
-import CEBRA from '../../assets/JUEGO1/CEBRA.jpg';
-import ESCUELA from '../../assets/JUEGO1/COLEGIO.jpg';
-import SEMAFORO from '../../assets/JUEGO1/SEMAFORO.png'; // Asegúrate de tener esta imagen
+import CEBRA from '../../assets/JUEGO1/CEBRA.webp';
+import ESCUELA from '../../assets/JUEGO1/COLEGIO.webp';
+import SEMAFORO from '../../assets/JUEGO1/SEMAFORO.webp'; // Asegúrate de tener esta imagen
 
 const TrafficSignsDesarrollo = () => {
   const { routeId } = useParams<{ routeId: string }>();

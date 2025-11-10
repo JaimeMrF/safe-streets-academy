@@ -13,13 +13,13 @@ import {
 } from 'lucide-react';
 
 // Importar imágenes
-import pareImg from '../../assets/JUEGO1/PARE.jpg';
-import cedaImg from '../../assets/JUEGO1/CEDA.jpg';
-import ninoImg from '../../assets/JUEGO1/NINO.jpg';
-import peatonImg from '../../assets/JUEGO1/PEATON.jpg';
-import rebasarImg from '../../assets/JUEGO1/REBASAR.png';
-import velocidadImg from '../../assets/JUEGO1/VELOCIDAD.png';
-import semaforoImg from '../../assets/JUEGO1/SEMAFORO.png';
+import pareImg from '../../assets/JUEGO1/PARE.webp';
+import cedaImg from '../../assets/JUEGO1/CEDA.webp';
+import ninoImg from '../../assets/JUEGO1/NINO.webp';
+import peatonImg from '../../assets/JUEGO1/PEATON.webp';
+import rebasarImg from '../../assets/JUEGO1/REBASAR.webp';
+import velocidadImg from '../../assets/JUEGO1/VELOCIDAD.webp';
+import semaforoImg from '../../assets/JUEGO1/SEMAFORO.webp';
 
 interface Question {
   id: number;

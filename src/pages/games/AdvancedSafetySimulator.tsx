@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import {
   CheckCircle,
   XCircle,
@@ -304,12 +307,55 @@ const SCENARIOS: AdvancedScenario[] = [
 ];
 
 const AdvancedSafetySimulator = () => {
+  const { routeId } = useParams<{ routeId: string }>();
+  const navigate = useNavigate();
+  
+  const [studentId, setStudentId] = useState('');
+  const [courseId, setCourseId] = useState('');
   const [currentScenario, setCurrentScenario] = useState(0);
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState(false);
+
+  useEffect(() => {
+    const initializeGame = async () => {
+      try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+          toast.error('Debe iniciar sesión para continuar');
+          navigate('/auth');
+          return;
+        }
+        setStudentId(user.id);
+
+        if (routeId) {
+          const { data: routeData, error: routeError } = await supabase
+            .from('routes')
+            .select('course_id')
+            .eq('id', routeId)
+            .single();
+
+          if (routeError) {
+            console.error('Error obteniendo información de ruta:', routeError);
+            toast.error('Error al cargar información del curso');
+            return;
+          }
+
+          if (routeData) {
+            setCourseId(routeData.course_id);
+          }
+        }
+      } catch (error) {
+        console.error('Error en inicialización:', error);
+        toast.error('Error al inicializar simulación');
+        navigate('/courses');
+      }
+    };
+
+    initializeGame();
+  }, [navigate, routeId]);
 
   const scenario = SCENARIOS[currentScenario];
   const challenge = scenario.challenges[currentChallenge];
@@ -349,17 +395,92 @@ const AdvancedSafetySimulator = () => {
     setCompleted(false);
   };
 
+  const handleComplete = async () => {
+    const totalChallenges = SCENARIOS.reduce((acc, s) => acc + s.challenges.length, 0);
+    const percentage = Math.round((score / totalChallenges) * 100);
+    const passed = percentage >= 70;
+
+    if (!passed) {
+      toast.warning('Se requiere mínimo 70% para aprobar');
+      setTimeout(() => restart(), 1500);
+      return;
+    }
+
+    try {
+      const { error: progressError } = await supabase
+        .from('student_progress')
+        .upsert({
+          student_id: studentId,
+          route_id: routeId,
+          score: score,
+          completed: true,
+          best_accuracy_percentage: percentage,
+          completion_date: new Date().toISOString()
+        }, {
+          onConflict: 'student_id,route_id'
+        });
+      
+      if (progressError) throw progressError;
+      
+      toast.success('¡Nivel completado exitosamente!');
+      
+      if (courseId) {
+        navigate(`/student/course/${courseId}`);
+      } else {
+        navigate('/courses');
+      }
+    } catch (error) {
+      console.error('Error al registrar progreso:', error);
+      toast.error('Error al guardar progreso');
+    }
+  };
+
   if (completed) {
+    const totalChallenges = SCENARIOS.reduce((acc, s) => acc + s.challenges.length, 0);
+    const percentage = Math.round((score / totalChallenges) * 100);
+    const passed = percentage >= 70;
+
     return (
       <div className="p-6 text-center">
-        <h2 className="text-2xl font-bold mb-4">✅ Simulación completada</h2>
-        <p className="text-lg mb-4">Puntaje total: {score} / {SCENARIOS.reduce((acc, s) => acc + s.challenges.length, 0)}</p>
-        <button
-          onClick={restart}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center gap-2 mx-auto"
-        >
-          <RotateCcw className="w-4 h-4" /> Reiniciar Simulación
-        </button>
+        <h2 className="text-2xl font-bold mb-4">
+          {passed ? '✅ Simulación completada exitosamente' : '⚠️ Simulación completada'}
+        </h2>
+        <p className="text-lg mb-2">Puntaje total: {score} / {totalChallenges}</p>
+        <p className="text-md mb-6">Precisión: {percentage}%</p>
+        
+        {passed ? (
+          <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 mb-6 max-w-md mx-auto">
+            <p className="text-green-800 font-semibold mb-2">¡Excelente trabajo!</p>
+            <p className="text-sm text-green-700">
+              Has completado exitosamente el nivel de análisis avanzado. Tus habilidades de evaluación de riesgo están bien desarrolladas.
+            </p>
+          </div>
+        ) : (
+          <div className="bg-amber-50 border-2 border-amber-200 rounded-lg p-4 mb-6 max-w-md mx-auto">
+            <p className="text-amber-800 font-semibold mb-2">Refuerzo necesario</p>
+            <p className="text-sm text-amber-700">
+              Se requiere 70% de precisión. Revisa los escenarios y practica el análisis de situaciones complejas.
+            </p>
+          </div>
+        )}
+
+        <div className="flex gap-3 justify-center">
+          <button
+            onClick={restart}
+            className="bg-slate-100 hover:bg-slate-200 text-slate-900 px-6 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            <RotateCcw className="w-4 h-4" /> Reintentar
+          </button>
+          {passed && (
+            <button
+              onClick={handleComplete}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            >
+              Finalizar y Continuar
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
     );
   }

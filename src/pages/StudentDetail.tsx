@@ -88,6 +88,15 @@ const StudentDetail = () => {
     totalRoutes: 0,
     completedRoutes: 0
   });
+  const [advancedMetrics, setAdvancedMetrics] = useState({
+    totalAttempts: 0,
+    perfectScores: 0,
+    averageAccuracy: 0,
+    consecutiveDays: 0,
+    bestStreak: 0,
+    completionRate: 0,
+    retryRate: 0
+  });
 
   useEffect(() => {
     const loadStudentData = async () => {
@@ -177,6 +186,58 @@ const StudentDetail = () => {
           completedRoutes: completedRoutesCount
         });
 
+        const newAdvancedMetrics = {
+          totalAttempts: 0,
+          perfectScores: 0,
+          averageAccuracy: 0,
+          consecutiveDays: 0,
+          bestStreak: 0,
+          improvementRate: 0,
+          completionRate: 0,
+          retryRate: 0
+        };
+
+        // Calcular métricas avanzadas
+        const allProgress = coursesWithProgress.flatMap(cp => cp.progress);
+
+        allProgress.forEach(p => {
+          newAdvancedMetrics.totalAttempts += p.attempts || 0;
+          if (p.score === 100) newAdvancedMetrics.perfectScores++;
+          if (p.best_accuracy_percentage) {
+            newAdvancedMetrics.averageAccuracy += p.best_accuracy_percentage;
+          }
+        });
+
+        newAdvancedMetrics.averageAccuracy = allProgress.length > 0 ? 
+          newAdvancedMetrics.averageAccuracy / allProgress.length : 0;
+
+        newAdvancedMetrics.completionRate = allProgress.length > 0 ?
+          (allProgress.filter(p => p.completed).length / allProgress.length * 100) : 0;
+
+        newAdvancedMetrics.retryRate = allProgress.length > 0 ?
+          (newAdvancedMetrics.totalAttempts / allProgress.length) : 0;
+
+        // Calcular racha
+        const dates = allProgress
+          .filter(p => p.last_attempt_date)
+          .map(p => new Date(p.last_attempt_date))
+          .sort((a, b) => b.getTime() - a.getTime());
+
+        if (dates.length > 0) {
+          newAdvancedMetrics.consecutiveDays = 1;
+          for (let i = 0; i < dates.length - 1; i++) {
+            const diff = Math.abs(dates[i].getTime() - dates[i + 1].getTime());
+            const daysDiff = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            if (daysDiff === 1) {
+              newAdvancedMetrics.consecutiveDays++;
+            } else {
+              break;
+            }
+          }
+          newAdvancedMetrics.bestStreak = newAdvancedMetrics.consecutiveDays;
+        }
+
+        setAdvancedMetrics(newAdvancedMetrics);
       } catch (error) {
         console.error("Error loading student data:", error);
         toast.error("Error al cargar datos del estudiante");
@@ -374,6 +435,10 @@ const StudentDetail = () => {
           {/* Course Progress */}
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList className="bg-white/50 backdrop-blur-sm p-1 rounded-2xl shadow-lg">
+              <TabsTrigger value="metrics" className="rounded-xl">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Métricas Avanzadas
+              </TabsTrigger>
               <TabsTrigger value="overview" className="rounded-xl">
                 <BarChart3 className="w-4 h-4 mr-2" />
                 Vista General
@@ -387,6 +452,102 @@ const StudentDetail = () => {
                 Actividad Reciente
               </TabsTrigger>
             </TabsList>
+
+            {/* Metrics Tab */}
+            <TabsContent value="metrics" className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className="border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Target className="w-5 h-5 text-blue-500" />
+                      Total Intentos
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-slate-800">{advancedMetrics.totalAttempts}</p>
+                    <p className="text-sm text-slate-600 mt-1">Actividades realizadas</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Trophy className="w-5 h-5 text-amber-500" />
+                      Puntuaciones Perfectas
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-slate-800">{advancedMetrics.perfectScores}</p>
+                    <p className="text-sm text-slate-600 mt-1">100% de precisión</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-green-500" />
+                      Precisión Promedio
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-slate-800">{advancedMetrics.averageAccuracy.toFixed(1)}%</p>
+                    <p className="text-sm text-slate-600 mt-1">En todas las actividades</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Activity className="w-5 h-5 text-purple-500" />
+                      Racha Actual
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-slate-800">{advancedMetrics.consecutiveDays}</p>
+                    <p className="text-sm text-slate-600 mt-1">Días consecutivos</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      Tasa de Completación
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-slate-800">{advancedMetrics.completionRate.toFixed(1)}%</p>
+                    <p className="text-sm text-slate-600 mt-1">Niveles completados</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Clock className="w-5 h-5 text-orange-500" />
+                      Tasa de Reintentos
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-slate-800">{advancedMetrics.retryRate.toFixed(1)}x</p>
+                    <p className="text-sm text-slate-600 mt-1">Promedio por nivel</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-white/50 shadow-xl backdrop-blur-sm bg-white/95">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Award className="w-5 h-5 text-yellow-500" />
+                      Mejor Racha
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-slate-800">{advancedMetrics.bestStreak}</p>
+                    <p className="text-sm text-slate-600 mt-1">Días consecutivos máx.</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
 
             {/* Overview Tab */}
             <TabsContent value="overview" className="space-y-6">

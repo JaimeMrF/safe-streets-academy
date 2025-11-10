@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Award, Download } from "lucide-react";
-import viaSafeLogo from "@/assets/viasafe-logo.png";
+import viaSafeLogo from "@/assets/viasafe-logo.webp";
 
 interface CertificateProps {
   studentName: string;

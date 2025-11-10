@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LogOut, BookOpen, Trophy, Clock, ArrowRight, User, Play, Video } from "lucide-react";
 import { toast } from "sonner";
+import { X } from 'lucide-react'; // o el ícono que uses
 
 interface Course {
   id: string;
@@ -46,6 +47,10 @@ const CourseSelector = () => {
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedContent, setSelectedContent] = useState<EducationalVideo | null>(null);
+  const [contentType, setContentType] = useState<'video' | 'model' | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -227,6 +232,7 @@ const CourseSelector = () => {
     return { totalCompleted, coursesInProgress, coursesCompleted };
   };
 
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10 flex items-center justify-center">
@@ -243,6 +249,51 @@ const CourseSelector = () => {
   }
 
   const stats = getTotalStats();
+
+
+  // AGREGAR ESTE COMPONENTE AQUÍ:
+  const MediaModal = ({ isOpen, onClose, content, type }: { 
+    isOpen: boolean; 
+    onClose: () => void; 
+    content: EducationalVideo | null; 
+    type: string | null;
+  }) => {
+    if (!isOpen || !content) return null;
+
+    const getYouTubeEmbedUrl = (url: string) => {
+      const videoId = url.match(/(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/watch\?.+&v=))([^&\n?#]+)/);
+      return videoId ? `https://www.youtube.com/embed/${videoId[1]}` : url;
+    };
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4" onClick={onClose}>
+        <div className="relative w-full max-w-5xl bg-white rounded-lg shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center justify-between p-4 bg-gray-100 border-b">
+            <h3 className="text-xl font-semibold">{content.title}</h3>
+            <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full">
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          <div className="p-6">
+            <div className="aspect-video w-full bg-black rounded-lg overflow-hidden">
+              <iframe
+                src={getYouTubeEmbedUrl(content.video_url)}
+                title={content.title}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            {content.description && (
+              <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+                <p className="text-gray-700">{content.description}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/10">
@@ -351,7 +402,7 @@ const CourseSelector = () => {
             </TabsTrigger>
             <TabsTrigger value="videos" className="flex items-center gap-2">
               <Video className="w-4 h-4" />
-              Videos ({videos.length})
+              Recursos ({videos.length})
             </TabsTrigger>
           </TabsList>
 
@@ -463,17 +514,21 @@ const CourseSelector = () => {
             {videos.length > 0 ? (
               <>
                 <div className="mb-6">
-                  <h2 className="text-2xl font-bold mb-2">Videos Educativos</h2>
-                  <p className="text-muted-foreground">{videos.length} video(s) disponible(s)</p>
+                  <h2 className="text-2xl font-bold mb-2">Recursos</h2>
+                  <p className="text-muted-foreground">{videos.length}recurso(s) disponible(s)</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {videos.map((video) => (
-                    <Card 
-                      key={video.id}
-                      className="hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
-                      onClick={() => window.open(video.video_url, '_blank')}
-                    >
+                      <Card 
+                        key={video.id}
+                        className="hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
+                        onClick={() => {
+                          setSelectedContent(video);
+                          setContentType('video');
+                          setModalOpen(true);
+                        }}
+                      >
                       <div className="relative h-48 overflow-hidden bg-secondary">
                         {video.thumbnail_url ? (
                           <img 
@@ -521,6 +576,7 @@ const CourseSelector = () => {
                     </Card>
                   ))}
                 </div>
+
               </>
             ) : (
               <Card className="border-2 border-dashed">
@@ -540,6 +596,12 @@ const CourseSelector = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <MediaModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        content={selectedContent}
+        type={contentType}
+      />
     </div>
   );
 };

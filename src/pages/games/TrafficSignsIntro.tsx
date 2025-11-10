@@ -5,12 +5,12 @@ import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import PARE from '../../assets/JUEGO1/PARE.jpg';
-import CEDA from '../../assets/JUEGO1/CEDA.jpg';
-import NINO from '../../assets/JUEGO1/NINO.jpg';
-import PEATON from '../../assets/JUEGO1/PEATON.jpg';
-import REBASAR from '../../assets/JUEGO1/REBASAR.png';
-import VELOCIDAD from '../../assets/JUEGO1/VELOCIDAD.png';
+import PARE from '../../assets/JUEGO1/PARE.webp';
+import CEDA from '../../assets/JUEGO1/CEDA.webp';
+import NINO from '../../assets/JUEGO1/NINO.webp';
+import PEATON from '../../assets/JUEGO1/PEATON.webp';
+import REBASAR from '../../assets/JUEGO1/REBASAR.webp';
+import VELOCIDAD from '../../assets/JUEGO1/VELOCIDAD.webp';
 import { AlertCircle, Award, Clock, Target, TrendingUp, CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy } from 'lucide-react';
 
 const TrafficSignsIntro = () => {

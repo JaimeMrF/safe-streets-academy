@@ -60,12 +60,12 @@ const AdminDashboard = () => {
       const { count: studentsCount } = await supabase
         .from("user_roles")
         .select("*", { count: "exact", head: true })
-        .eq("role", "student");
+        .eq("user_role", "student");
 
       const { count: teachersCount } = await supabase
         .from("user_roles")
         .select("*", { count: "exact", head: true })
-        .eq("role", "teacher");
+        .eq("user_role", "teacher");
 
       const { count: coursesCount } = await supabase
         .from("courses")
